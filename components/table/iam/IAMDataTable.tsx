@@ -1,6 +1,5 @@
 "use client";
-
-import React, { FC, useState } from "react";
+import React, { FC, useState, useEffect } from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -16,7 +15,7 @@ import {
 
 import { ChevronDown } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { BiFilterAlt } from "react-icons/bi";
+import { BiSearchAlt } from "react-icons/bi";
 import { Button } from "@/components/ui/button";
 
 import {
@@ -36,7 +35,6 @@ import {
   TableHead,
   TableRow,
   TableCell,
-  TableCaption,
 } from "@/components/ui/table";
 
 import {
@@ -45,7 +43,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "./ui/select";
+} from "../../ui/select";
 
 import {
   ChevronLeftIcon,
@@ -54,11 +52,27 @@ import {
   DoubleArrowRightIcon,
 } from "@radix-ui/react-icons";
 
-import { PPLHPFinalReviewPageColumns } from "@/components/table/column";
+import Aos from "aos";
+import "aos/dist/aos.css";
 
-import exampleProjectsData from "./data/projects/dummie";
+import { IAMTableColumns } from "@/components/table/column";
+import { SOCTableColumns } from "@/components/table/column";
 
-const DataTable: FC = () => {
+import { CaseType } from "@/lib/case.model";
+import {
+  handleCaseClosed,
+  handleCaseReview,
+  handleSendToResolver,
+  updateCaseStatus,
+} from "@/lib/actions";
+
+Aos.init();
+
+interface DataTableProps {
+  data: CaseType[];
+}
+
+const DataTable: FC<DataTableProps> = ({ data }) => {
   const router = useRouter();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -66,17 +80,17 @@ const DataTable: FC = () => {
     _id: false,
   });
   const [rowSelection, setRowSelection] = useState({});
+  const [expandedRow, setExpandedRow] = useState<string | null>(null);
 
   const table = useReactTable({
-    data: exampleProjectsData,
-    columns: PPLHPFinalReviewPageColumns,
+    data,
+    columns: IAMTableColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    // HERE
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
     state: {
@@ -87,17 +101,26 @@ const DataTable: FC = () => {
     },
   });
 
+  const handleRowClick = (rowId: string) => {
+    setExpandedRow((prev) => (prev === rowId ? null : rowId));
+  };
+
   return (
-    <div className="w-full ">
-      <div className="flex items-center py-4">
-        <BiFilterAlt className="text-xl translate-x-8" />
+    <div className="w-full mt-4 border-2 rounded-xl p-10 ">
+      <div className="font-bold text-xl text-mandiriBlue-950">
+        <h1>Workstation</h1>
+      </div>
+      <div className="flex items-center py-4 text-mandiriWhite">
+        <BiSearchAlt className="text-xl translate-x-9 fill-mandiriWhite " />
         <Input
           placeholder="Filter Cases by ID"
-          value={(table.getColumn("case_id")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("case_id")?.setFilterValue(event.target.value)
+          value={
+            (table.getColumn("model_name")?.getFilterValue() as string) ?? ""
           }
-          className="max-w-sm pl-10"
+          onChange={(event) =>
+            table.getColumn("model_name")?.setFilterValue(event.target.value)
+          }
+          className="max-w-sm pl-12 bg-mandiriBlue-250 text-mandiriWhite rounded-full"
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -132,10 +155,10 @@ const DataTable: FC = () => {
         <Table className="font-dm-sans ">
           <TableHeader className="">
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow className="" key={headerGroup.id}>
+              <TableRow className="b" key={headerGroup.id}>
                 {headerGroup.headers.map((header, index) => {
                   let className =
-                    "text-center text-mandiriWhite italic p-2 bg-mandiriBlue-950 ";
+                    "text-center text-mandiriWhite italic bg-mandiriBlue-950 p-2";
                   if (index === 0) {
                     className += " rounded-l-full "; // Add rounded corners to the left side
                   }
@@ -159,35 +182,121 @@ const DataTable: FC = () => {
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  className="hover:bg-mandiriSkyBlue/40 ease-in-out duration-500 text-s hover:cursor-pointer hover:rounded-xl text-center"
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                  onClick={() => router.push("admin/" + row.getValue("_id"))}
-                >
-                  {row.getVisibleCells().map((cell, index) => {
-                    let className = "py-4";
-                    if (index === 0) {
-                      className += " rounded-l-full";
-                    }
-                    if (index === row.getVisibleCells().length - 1) {
-                      className += " rounded-r-full";
-                    }
-                    return (
-                      <TableCell key={cell.id} className={className}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
+                <React.Fragment key={row.id}>
+                  <TableRow
+                    className={`hover:bg-mandiriSkyBlue/40 transition-all ease-in-out duration-500 text-s hover:cursor-pointer hover:rounded-sm text-center ${
+                      expandedRow === row.id
+                        ? "bg-mandiriYellow-500/70 hover:bg-mandiriYellow-500/50"
+                        : ""
+                    }`}
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                    onClick={() => handleRowClick(row.id)}
+                  >
+                    {row.getVisibleCells().map((cell, index) => {
+                      let className = "py-4";
+                      if (index === 0) {
+                        className += " rounded-l-xl";
+                      }
+                      if (index === row.getVisibleCells().length - 1) {
+                        className += " rounded-r-xl";
+                      }
+                      return (
+                        <TableCell key={cell.id} className={className}>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </TableCell>
+                      );
+                    })}
+                  </TableRow>
+                  {expandedRow === row.id && (
+                    <TableRow>
+                      <TableCell colSpan={SOCTableColumns.length}>
+                        <div
+                          className={`expandable-content ${
+                            expandedRow === row.id ? "expanded" : "collapsed"
+                          } rounded-xl text-mandiriWhite flex transition-all duration-500 ease-in-out`}
+                          style={{
+                            background: "#192E52",
+                            backdropFilter: "blur(10px)",
+                            border: "1px solid rgba(255, 255, 255, 0.2)",
+                          }}
+                        >
+                          <div className="w-3/4 pr-4">
+                            <h2 className="font-bold text-lg">Case Details</h2>
+                            <div className="py-2 ml-5 text-md">
+                              <p className="flex">
+                                <span className="font-semibold w-40">
+                                  Model Severity:
+                                </span>
+                                <span className="uppercase">
+                                  {row.original.case_severity}
+                                </span>
+                              </p>
+                              <p className="flex">
+                                <span className="font-semibold w-40">
+                                  Data Source:
+                                </span>
+                                <span>{row.original.data_processor}</span>
+                              </p>
+                              <p className="flex">
+                                <span className="font-semibold w-40">
+                                  Created:
+                                </span>
+                                <span>{row.original.created_at}</span>
+                              </p>
+                              <p className="flex">
+                                <span className="font-semibold w-40">
+                                  Owner:
+                                </span>
+                                <span className="capitalize">
+                                  {row.original.owners}
+                                </span>
+                              </p>
+                              <p className="flex">
+                                <span className="font-semibold w-40">
+                                  Associated Insight:
+                                </span>
+                                <span>{row.original.associated_insight}</span>
+                              </p>
+                              <p className="flex">
+                                <span className="font-semibold w-40">
+                                  Impact Scope:
+                                </span>
+                                <span>{row.original.impact_scope}</span>
+                              </p>
+                              <p className="flex">
+                                <span className="font-semibold w-40">IP:</span>
+                                <span>{row.original.ip_address}</span>
+                              </p>
+                              <p className="flex">
+                                <span className="font-semibold w-40">Mac:</span>
+                                <span>{row.original.mac_address}</span>
+                              </p>
+                            </div>
+                          </div>
+                          <div className="w-1/4 border-l pl-4 flex flex-col items-center">
+                            <Button
+                              onClick={() => handleCaseReview(row.original._id)}
+                              className="mb-2"
+                            >
+                              Finish Investigation
+                            </Button>
+                            <Button onClick={() => alert("Edit")}>Edit</Button>
+                            <Button className="mt-2">Delete</Button>
+                          </div>
+                        </div>
                       </TableCell>
-                    );
-                  })}
-                </TableRow>
+                    </TableRow>
+                  )}
+                </React.Fragment>
               ))
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={PPLHPFinalReviewPageColumns.length}
+                  colSpan={SOCTableColumns.length}
                   className="h-24 text-center hover:rounded-xl"
                 >
                   No results.
@@ -199,7 +308,6 @@ const DataTable: FC = () => {
       </div>
       <div className="flex items-center justify-end space-x-2 py-4 max-sm:flex-col gap-5">
         <div className="flex-1 text-sm text-light_brown">
-          {/* {table.getFilteredSelectedRowModel().rows.length} of{" "} */}
           Total : {table.getFilteredRowModel().rows.length} row(s).
         </div>
         <div className="flex items-center space-x-2">

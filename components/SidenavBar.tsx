@@ -1,39 +1,25 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { Nav } from "./ui/nav";
-import {
-  useWindowSize,
-  useWindowWidth,
-  useWindowHeight,
-} from "@react-hook/window-size";
-
-// Import icons from lucide-react
+import { useWindowWidth } from "@react-hook/window-size";
+import { signOut } from "next-auth/react";
 import { LayoutDashboard, Users, Settings, LogOut } from "lucide-react";
 
-type Props = {};
+type Props = {
+  isCollapsed: boolean;
+  setIsCollapsed: (isCollapsed: boolean) => void;
+};
 
-export default function SidenavBar({}: Props) {
-  const [isCollapsed, setIsCollapsed] = React.useState(true);
-
+export default function SidenavBar({ isCollapsed, setIsCollapsed }: Props) {
   const onlyWidth = useWindowWidth();
-  const onlyHeight = useWindowHeight();
   const mobileWidth = onlyWidth < 768;
 
-  // Toggle the collapsed state
-  function toggleCollapse() {
-    setIsCollapsed(!isCollapsed);
-  }
-
   return (
-    // <div
-    //   className={`bg-gradient-to-t from-mandiriBlue-900 to-mandiriBlue-950 relative border-r px-3 pb-10 pt-24 transition-all duration-500 ease-in-out ${
-    //     isCollapsed ? "w-[100px]" : "w-[200px]"
-    //   }`}
     <div
-      className={`bg-gradient-to-t from-mandiriBlue-900 to-mandiriBlue-950 relative border-r px-3 pb-10 pt-24 transition-all duration-500 ease-in-out ${
+      className={`bg-gradient-to-t from-mandiriBlue-900 to-mandiriBlue-950 fixed top-0 left-0 h-full border-r p-3 transition-all duration-500 ease-in-out flex flex-col ${
         isCollapsed ? "w-[100px]" : "w-[200px]"
       }`}
-      onMouseEnter={() => !mobileWidth && setIsCollapsed(false)} // Only trigger on non-mobile widths
+      onMouseEnter={() => !mobileWidth && setIsCollapsed(false)}
       onMouseLeave={() => !mobileWidth && setIsCollapsed(true)}
     >
       <Nav
@@ -51,19 +37,20 @@ export default function SidenavBar({}: Props) {
             icon: Users,
             variant: "ghost",
           },
-          {
-            title: "Settings",
-            href: "/settings",
-            icon: Settings,
-            variant: "ghost",
-          },
-          {
-            title: "Log Out",
-            href: "/logout",
-            icon: LogOut,
-            variant: "ghost",
-          },
         ]}
+        settingsLink={{
+          title: "Settings",
+          href: "/settings",
+          icon: Settings,
+          variant: "ghost",
+        }}
+        logoutLink={{
+          title: "Log Out",
+          onClick: () => signOut(),
+          href: "/signIn",
+          icon: LogOut,
+          variant: "ghost",
+        }}
       />
     </div>
   );

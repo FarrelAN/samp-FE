@@ -156,3 +156,21 @@
   src: local("Myriad Pro Bold Condensed Italic"),
     url("../public/fonts/myriad/MYRIADPRO-BOLDCONDIT.woff") format("woff");
 }
+
+/* Add this to your global CSS or a specific CSS file that gets imported */
+/* Add this to your global CSS or a specific CSS file that gets imported */
+/* Add this to your global CSS or a specific CSS file that gets imported */
+.expandable-content {
+  overflow: hidden;
+  transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out;
+}
+
+.expandable-content.collapsed {
+  max-height: 0;
+  padding: 0;
+}
+
+.expandable-content.expanded {
+  max-height: 500px; /* Adjust to a value that will fit your content */
+  padding: 16px; /* Adjust according to your design */
+}

@@ -3,11 +3,8 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { getServerSession } from "next-auth";
 import authOptions from "../pages/api/auth/[...nextauth]";
-import SessionProvider from "./SessionProvider";
-import Home from "./page";
-import Login from "./(auth)/signIn/page";
+import ClientRootLayout from "./ClientRootLayout";
 import { cn } from "../lib/utils";
-import SidenavBar from "@/components/SidenavBar";
 import localFont from "next/font/local";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -37,7 +34,6 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const session = await getServerSession(authOptions);
-  const isLoggedIn = session !== null;
 
   return (
     <html lang="en" className={`${myriad.variable} font-sans`}>
@@ -47,11 +43,7 @@ export default async function RootLayout({
           myriad.className
         )}
       >
-        <SessionProvider session={session}>
-          {isLoggedIn && <SidenavBar />}
-          {/* Conditionally add padding if user is logged in */}
-          <div className={cn("w-full", isLoggedIn && "p-8")}>{children}</div>
-        </SessionProvider>
+        <ClientRootLayout session={session}>{children}</ClientRootLayout>
       </body>
     </html>
   );

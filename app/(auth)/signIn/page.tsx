@@ -6,7 +6,7 @@ import Carousel from "@/components/ui/carousel";
 import bgImage from "@/public/assets/images/bg8.jpg"; // Ensure this path correctly points to your background image
 
 export default function Login() {
-  const [email, setEmail] = useState("");
+  const [userAD, setUserAD] = useState("");
   const [password, setPassword] = useState("");
 
   return (
@@ -44,17 +44,17 @@ export default function Login() {
             <div className="space-y-6">
               <div>
                 <label
-                  htmlFor="email"
+                  htmlFor="userAD"
                   className="block text-sm font-medium text-mandiriGrey"
                 >
-                  Email Address
+                  User AD
                 </label>
                 <input
-                  type="email"
-                  id="email"
+                  type="text"
+                  id="userAD"
                   className="mt-1 block w-full px-3 py-2 bg-mandiriWhite border border-mandiriGrey rounded-md shadow-sm focus:ring-mandiriBlue-950  focus:border-mandiriBlue-950 "
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  value={userAD}
+                  onChange={(e) => setUserAD(e.target.value)}
                   required
                 />
               </div>
@@ -77,13 +77,13 @@ export default function Login() {
               <button
                 onClick={() =>
                   signIn("credentials", {
-                    email,
+                    userAD,
                     password,
                     redirect: true,
                     callbackUrl: "/",
                   })
                 }
-                disabled={!email || !password}
+                disabled={!userAD || !password}
                 className="w-full bg-mandiriYellow-400 hover:bg-mandiriYellow-500 text-mandiriBlue-950  font-semibold py-2 px-4 rounded"
               >
                 Sign In

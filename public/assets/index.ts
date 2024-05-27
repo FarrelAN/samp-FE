@@ -8,3 +8,4 @@ export { default as SignIn4 } from "./vectors/signin (4).svg";
 export { default as Carousel1 } from "./images/carousel1.png";
 export { default as Carousel2 } from "./images/carousel2.png";
 export { default as bgImage } from "./images/bg8.jpg";
+export { default as sampLogo } from "./images/samp2.svg";
