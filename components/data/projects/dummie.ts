@@ -1,55 +1,94 @@
-import { ProjectLHPType } from "@/lib/case.model";
+import { RuleSetType } from "@/lib/types";
 
 // Example projects data of type ProjectLHPType[]
-const exampleProjectsData: ProjectLHPType[] = [
-  {
-    _id: "1",
-    case_id: "WB-9740-20240430-00003",
-    model_name:
-      "WB-9740-20240430-00003 (Potential Impersonation Attempt - Impossible Travel)",
-    case_severity: "LOW",
-    data_processor: "Microsoft Entra ID",
-    created_at: "2024-04-30 07:34:24",
-    case_status: "Open",
-    impact_scope: "Esthera Jackson esthera@simmmple.com",
-  },
-  {
-    _id: "2",
-    case_id: "WB-9740-20240430-00004",
-    model_name:
-      "WB-9740-20240430-00004 (Potential Brute Force Attack - Password Guessing)",
-    case_severity: "MEDIUM",
-    data_processor: "Microsoft Entra ID",
-    created_at: "2024-04-30 07:46:14",
-    case_status: "On Progress",
 
-    impact_scope: "Esthera Jackson esthera@simmmple.com",
+export const rulesData: RuleSetType[] = [
+  {
+    risk_factor: "Account Compromise",
+    risk_event: "Potential Impersonation Attempt - Impossible Travel",
+    most_impacted_assets: 41,
+    real_time_score: 1.4,
+    remediation:
+      "• Disable or reset this account with a strong password.\n• Enable the Account Lockout Policy in your Active Directory.",
   },
   {
-    _id: "3",
-    case_id: "WB-9740-20240430-00008",
-    model_name:
-      "WB-9740-20240430-00008 (Potential Impersonation Attempt - Atypical Travel)",
-    case_severity: "HIGH",
-    data_processor: "Microsoft Entra ID",
-    created_at: "2024-04-30 11:21:43",
-    case_status: "Closed",
-
-    impact_scope: "Esthera Jackson esthera@simmmple.com",
+    risk_factor: "Account Compromise",
+    risk_event: "Potential Brute Force Attack - Password Guessing",
+    most_impacted_assets: 316,
+    real_time_score: 1.0,
+    remediation: "• Disable or reset this account with a strong password.",
   },
   {
-    _id: "4",
-    case_id: "WB-9740-20240430-00009",
-    model_name:
-      "WB-9740-20240430-00009 (Potential Impersonation Attempt - Impossible Travel)",
-    case_severity: "LOW",
-    data_processor: "Microsoft Entra ID",
-    created_at: "2024-04-30 12:00:04",
-    case_status: "On Progress",
-
-    impact_scope: "Mohamad Farrel Athaillah Nugroho farrelathaillah@gmail.com",
+    risk_factor: "Account Compromise",
+    risk_event: "Potential Impersonation Attempt -Atypical Travel",
+    most_impacted_assets: 83,
+    real_time_score: 1.0,
+    remediation:
+      "• Disable or reset this account with a strong password.\n• Enable the Account Lockout Policy in your Active Directory.",
   },
-  // Continue the pattern for the remaining data...
+  {
+    risk_factor: "Account Compromise",
+    risk_event: "Leaked Account Identification",
+    most_impacted_assets: 8,
+    real_time_score: 0.7,
+    remediation:
+      "• Change the password immediately on this account and any other account where the same password is used.",
+  },
+  {
+    risk_factor: "Account Compromise",
+    risk_event: "Potential BruteForce Attack - Password Spraying",
+    most_impacted_assets: 374,
+    real_time_score: 0.2,
+    remediation:
+      "• Enforce Multi-Factor Authentication (MFA).\n• Disable or reset this account with a strong password.",
+  },
+  {
+    risk_factor: "Account Compromise",
+    risk_event: "Rapid Account Creation and Deletion",
+    most_impacted_assets: 1,
+    real_time_score: 0.2,
+    remediation: "• Contact account owner to verify this event.",
+  },
+  {
+    risk_factor: "Account Compromise",
+    risk_event:
+      "Microsoft Entra ID Identity Protection Risk Detection - Anonymous IP Address",
+    most_impacted_assets: 96,
+    real_time_score: 0.1,
+    remediation:
+      "• Contact Account Owner to Verify the Event\n• Disable/ Reset this account with a Strong Password.",
+  },
+  {
+    risk_factor: "Account Compromise",
+    risk_event:
+      "Microsoft Entra ID Identity Protection Risk Detection - Unfamiliar Sign-in Properties",
+    most_impacted_assets: 94,
+    real_time_score: 0.1,
+    remediation:
+      "• Disable or reset this account with a strong password.\n• Enable the Account Lockout Policy in your Active Directory.",
+  },
+  {
+    risk_factor: "Activity & Behaviour",
+    risk_event: "Unusual Audit by User",
+    most_impacted_assets: 60,
+    real_time_score: 0.1,
+    remediation:
+      "• Check whether the user or the user role has permission on the operations\n• Disable or reset this account with a strong password if they were not excepted.",
+  },
+  {
+    risk_factor: "Activity & Behaviour",
+    risk_event: "Potential Impersonation Attempt - Sudden Appearance",
+    most_impacted_assets: 1,
+    real_time_score: 0.1,
+    remediation:
+      "• Disable or reset this account with a strong password.\n• Enable the Account Lockout Policy in your Active Directory.",
+  },
+  {
+    risk_factor: "Activity & Behaviour",
+    risk_event: "Anomalous Sign-In Sign-in into App from multiple locations",
+    most_impacted_assets: 1,
+    real_time_score: 0.1,
+    remediation:
+      "• Disable or reset this account with a strong password.\n• Enable the Account Lockout Policy in your Active Directory.",
+  },
 ];
-
-export default exampleProjectsData;

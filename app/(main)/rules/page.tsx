@@ -1,20 +1,16 @@
-// components/pages/AdminPage.tsx
 "use client";
 import React from "react";
-import DataTable from "@/components/table/soc/SOCDataTable";
+import RulesTable from "@/components/table/rules/RulesTable";
 import PageTitle from "@/components/PageTitle";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { useRouter } from "next/navigation";
 import LoadingScreen from "@/components/LoadingScreen"; // Adjust the import path if necessary
 import { sampLogo } from "@/public/assets";
-import { CaseType } from "@/lib/types";
+import { CaseType, RuleSetType } from "@/lib/types";
+import { rulesData } from "@/components/data/projects/dummie";
 
-interface HomeProps {
-  cases: CaseType[];
-}
-
-export default function SOCPage({ cases }: HomeProps) {
+export default function SOCPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
 
@@ -28,6 +24,7 @@ export default function SOCPage({ cases }: HomeProps) {
   }
 
   const userName = session?.user?.username || "admin";
+  const rules = rulesData;
 
   return (
     <div className="h-screen w-full bg:mandiriGrey">
@@ -42,7 +39,7 @@ export default function SOCPage({ cases }: HomeProps) {
 
       <h1>Welcome, {userName}</h1>
 
-      <DataTable data={cases} />
+      <RulesTable data={rules} />
     </div>
   );
 }

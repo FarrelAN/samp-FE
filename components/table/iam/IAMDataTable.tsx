@@ -58,7 +58,7 @@ import "aos/dist/aos.css";
 import { IAMTableColumns } from "@/components/table/column";
 import { SOCTableColumns } from "@/components/table/column";
 
-import { CaseType } from "@/lib/case.model";
+import { CaseType } from "@/lib/types";
 import {
   handleCaseClosed,
   handleCaseReview,
@@ -186,7 +186,7 @@ const DataTable: FC<DataTableProps> = ({ data }) => {
                   <TableRow
                     className={`hover:bg-mandiriSkyBlue/40 transition-all ease-in-out duration-500 text-s hover:cursor-pointer hover:rounded-sm text-center ${
                       expandedRow === row.id
-                        ? "bg-mandiriYellow-500/70 hover:bg-mandiriYellow-500/50"
+                        ? "bg-mandiriYellow-500/75 hover:bg-mandiriYellow-500/50"
                         : ""
                     }`}
                     key={row.id}

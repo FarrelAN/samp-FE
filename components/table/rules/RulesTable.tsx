@@ -55,15 +55,21 @@ import {
 import Aos from "aos";
 import "aos/dist/aos.css";
 
+import { IAMTableColumns, RuleSetColumns } from "@/components/table/column";
 import { SOCTableColumns } from "@/components/table/column";
 
-import { CaseType } from "@/lib/types";
-import { handleCaseClosed, handleSendToResolver } from "@/lib/actions";
+import { RuleSetType } from "@/lib/types";
+import {
+  handleCaseClosed,
+  handleCaseReview,
+  handleSendToResolver,
+  updateCaseStatus,
+} from "@/lib/actions";
 
 Aos.init();
 
 interface DataTableProps {
-  data: CaseType[];
+  data: RuleSetType[];
 }
 
 const DataTable: FC<DataTableProps> = ({ data }) => {
@@ -74,11 +80,10 @@ const DataTable: FC<DataTableProps> = ({ data }) => {
     _id: false,
   });
   const [rowSelection, setRowSelection] = useState({});
-  const [expandedRow, setExpandedRow] = useState<string | null>(null);
 
   const table = useReactTable({
     data,
-    columns: SOCTableColumns,
+    columns: RuleSetColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -95,16 +100,12 @@ const DataTable: FC<DataTableProps> = ({ data }) => {
     },
   });
 
-  const handleRowClick = (rowId: string) => {
-    setExpandedRow((prev) => (prev === rowId ? null : rowId));
-  };
-
   return (
     <div className="w-full mt-4 border-2 rounded-xl p-10 ">
       <div className="font-bold text-xl text-mandiriBlue-950">
         <h1>Workstation</h1>
       </div>
-      <div className="flex items-center py-4">
+      <div className="flex items-center py-4 text-mandiriWhite">
         <BiSearchAlt className="text-xl translate-x-9 fill-mandiriWhite " />
         <Input
           placeholder="Filter Cases by ID"
@@ -114,7 +115,7 @@ const DataTable: FC<DataTableProps> = ({ data }) => {
           onChange={(event) =>
             table.getColumn("model_name")?.setFilterValue(event.target.value)
           }
-          className="max-w-sm pl-12 bg-mandiriBlue-550 fill-mandiriWhite text-mandiriWhite rounded-full"
+          className="max-w-sm pl-12 bg-mandiriBlue-250 text-mandiriWhite rounded-full"
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -178,14 +179,9 @@ const DataTable: FC<DataTableProps> = ({ data }) => {
               table.getRowModel().rows.map((row) => (
                 <React.Fragment key={row.id}>
                   <TableRow
-                    className={`hover:bg-mandiriSkyBlue/40 transition-all ease-in-out duration-500 text-s hover:cursor-pointer hover:rounded-sm text-center ${
-                      expandedRow === row.id
-                        ? "bg-mandiriYellow-500/80 hover:bg-mandiriYellow-500/50"
-                        : ""
-                    }`}
+                    className={`hover:bg-mandiriSkyBlue/40 transition-all ease-in-out duration-500 text-s hover:cursor-pointer hover:rounded-sm text-center`}
                     key={row.id}
                     data-state={row.getIsSelected() && "selected"}
-                    onClick={() => handleRowClick(row.id)}
                   >
                     {row.getVisibleCells().map((cell, index) => {
                       let className = "py-4";
@@ -205,93 +201,6 @@ const DataTable: FC<DataTableProps> = ({ data }) => {
                       );
                     })}
                   </TableRow>
-                  {expandedRow === row.id && (
-                    <TableRow>
-                      <TableCell colSpan={SOCTableColumns.length}>
-                        <div
-                          className={`expandable-content ${
-                            expandedRow === row.id ? "expanded" : "collapsed"
-                          } rounded-xl text-mandiriWhite flex transition-all duration-500 ease-in-out`}
-                          style={{
-                            background: "#192E52",
-                            backdropFilter: "blur(10px)",
-                            border: "1px solid rgba(255, 255, 255, 0.2)",
-                          }}
-                        >
-                          <div className="w-3/4 pr-4">
-                            <h2 className="font-bold text-lg">Case Details</h2>
-                            <div className="py-2 ml-5 text-md">
-                              <p className="flex">
-                                <span className="font-semibold w-40">
-                                  Model Severity:
-                                </span>
-                                <span className="uppercase">
-                                  {row.original.case_severity}
-                                </span>
-                              </p>
-                              <p className="flex">
-                                <span className="font-semibold w-40">
-                                  Data Source:
-                                </span>
-                                <span>{row.original.data_processor}</span>
-                              </p>
-                              <p className="flex">
-                                <span className="font-semibold w-40">
-                                  Created:
-                                </span>
-                                <span>{row.original.created_at}</span>
-                              </p>
-                              <p className="flex">
-                                <span className="font-semibold w-40">
-                                  Owner:
-                                </span>
-                                <span className="capitalize">
-                                  {row.original.owners}
-                                </span>
-                              </p>
-                              <p className="flex">
-                                <span className="font-semibold w-40">
-                                  Associated Insight:
-                                </span>
-                                <span>{row.original.associated_insight}</span>
-                              </p>
-                              <p className="flex">
-                                <span className="font-semibold w-40">
-                                  Impact Scope:
-                                </span>
-                                <span>{row.original.impact_scope}</span>
-                              </p>
-                              <p className="flex">
-                                <span className="font-semibold w-40">IP:</span>
-                                <span>{row.original.ip_address}</span>
-                              </p>
-                              <p className="flex">
-                                <span className="font-semibold w-40">Mac:</span>
-                                <span>{row.original.mac_address}</span>
-                              </p>
-                            </div>
-                          </div>
-                          <div className="w-1/4 border-l pl-4 flex flex-col items-center justify-center">
-                            <Button
-                              onClick={() =>
-                                handleSendToResolver(row.original._id)
-                              }
-                              className="mb-2"
-                            >
-                              Send to Resolver
-                            </Button>
-                            <Button onClick={() => alert("Edit")}>Edit</Button>
-                            <Button
-                              onClick={() => handleCaseClosed(row.original._id)}
-                              className="mt-2"
-                            >
-                              Close Case
-                            </Button>
-                          </div>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  )}
                 </React.Fragment>
               ))
             ) : (

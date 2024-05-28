@@ -7,7 +7,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import LoadingScreen from "@/components/LoadingScreen"; // Adjust the import path if necessary
 import { sampLogo } from "@/public/assets";
-import { CaseType } from "@/lib/case.model";
+import { CaseType } from "@/lib/types";
 
 interface HomeProps {
   cases: CaseType[];

@@ -3,7 +3,13 @@ import React, { useState } from "react";
 import { Nav } from "./ui/nav";
 import { useWindowWidth } from "@react-hook/window-size";
 import { signOut } from "next-auth/react";
-import { LayoutDashboard, Users, Settings, LogOut } from "lucide-react";
+import {
+  LayoutDashboard,
+  Users,
+  Settings,
+  LogOut,
+  BookOpenText,
+} from "lucide-react";
 
 type Props = {
   isCollapsed: boolean;
@@ -32,9 +38,9 @@ export default function SidenavBar({ isCollapsed, setIsCollapsed }: Props) {
             variant: "default",
           },
           {
-            title: "Users",
-            href: "/users",
-            icon: Users,
+            title: "Rules",
+            href: "/rules",
+            icon: BookOpenText,
             variant: "ghost",
           },
         ]}

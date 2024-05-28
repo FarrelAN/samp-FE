@@ -1,5 +1,5 @@
 import axios from "axios";
-import { CaseType } from "./case.model";
+import { CaseType } from "./types";
 
 const apiBaseUrl = process.env.API_BASE_URL || "";
 
