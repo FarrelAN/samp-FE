@@ -101,65 +101,18 @@ const DataTable: FC<DataTableProps> = ({ data }) => {
   });
 
   return (
-    <div className="w-full mt-4 border-2 rounded-xl p-10 ">
+    <div className="w-full mt-4 border-2  rounded-xl p-5">
       <div className="font-bold text-xl text-mandiriBlue-950">
-        <h1>Workstation</h1>
+        <h1>Risk Events Rules and Factors </h1>
       </div>
-      <div className="flex items-center py-4 text-mandiriWhite">
-        <BiSearchAlt className="text-xl translate-x-9 fill-mandiriWhite " />
-        <Input
-          placeholder="Filter Cases by ID"
-          value={
-            (table.getColumn("model_name")?.getFilterValue() as string) ?? ""
-          }
-          onChange={(event) =>
-            table.getColumn("model_name")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm pl-12 bg-mandiriBlue-250 text-mandiriWhite rounded-full"
-        />
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown className="ml-2 h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  column.id !== "_id" && (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      className="capitalize"
-                      checked={column.getIsVisible()}
-                      onCheckedChange={(value) =>
-                        column.toggleVisibility(!!value)
-                      }
-                    >
-                      {column.id}
-                    </DropdownMenuCheckboxItem>
-                  )
-                );
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-      <div className=" text-light_brown rounded-lg ">
+      <div className="py-8 rounded-lg ">
         <Table className="font-dm-sans ">
           <TableHeader className="">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow className="b" key={headerGroup.id}>
                 {headerGroup.headers.map((header, index) => {
                   let className =
-                    "text-center text-mandiriWhite italic bg-mandiriBlue-950 p-2";
-                  if (index === 0) {
-                    className += " rounded-l-full "; // Add rounded corners to the left side
-                  }
-                  if (index === headerGroup.headers.length - 1) {
-                    className += " rounded-r-full "; // Add rounded corners to the right side
-                  }
+                    "text-center text-black italic border-y-2 border-black/30";
                   return (
                     <TableHead key={header.id} className={className}>
                       {header.isPlaceholder

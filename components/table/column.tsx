@@ -283,25 +283,14 @@ export const IAMTableColumns: ColumnDef<CaseType>[] = [
 export const RuleSetColumns: ColumnDef<RuleSetType>[] = [
   {
     accessorKey: "risk_factor",
-    header: ({ column }) => {
-      return (
-        <Button
-          className="italic"
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Risk Factor
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
+    header: "Risk Factor",
     cell: ({ row }) => {
       const riskFactor = row.getValue("risk_factor");
       let bgColor = "bg-orange-400"; // Default color for "Account Compromise"
       if (riskFactor === "Activity & Behaviour") bgColor = "bg-pink-500";
 
       return (
-        <div className="flex justify-center">
+        <div className="flex justify-center px-5">
           <div
             className={`flex items-center py-1 px-2 rounded-md ${bgColor} text-white`}
             style={{ whiteSpace: "nowrap" }} // Prevent line breaks
@@ -319,15 +308,15 @@ export const RuleSetColumns: ColumnDef<RuleSetType>[] = [
     accessorKey: "risk_event",
     header: "Risk Event",
     cell: ({ row }) => <div className="px-5">{row.getValue("risk_event")}</div>,
-    size: 300, // Set a specific width
+    size: 200, // Set a specific width
   },
   {
     accessorKey: "real_time_score",
     header: "Realtime Score",
     cell: ({ row }) => (
-      <div className="pl-0.5">{row.getValue("real_time_score")}</div>
+      <div className="px-12">{row.getValue("real_time_score")}</div>
     ),
-    size: 150, // Set a specific width
+    size: 150, // Increase the width for "Realtime Score"
   },
   {
     accessorKey: "remediation",
@@ -338,6 +327,6 @@ export const RuleSetColumns: ColumnDef<RuleSetType>[] = [
         .map((line: string, index: number) => <div key={index}>{line}</div>);
       return <div className="pl-0.5">{remediations}</div>;
     },
-    size: 400, // Set a specific width
+    size: 250, // Reduce the width for "Remediation"
   },
 ];

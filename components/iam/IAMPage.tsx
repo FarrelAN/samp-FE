@@ -1,7 +1,7 @@
 // components/pages/AdminPage.tsx
 "use client";
 import React from "react";
-import DataTable from "@/components/table/iam/IAMDataTable";
+import DataTable from "@/components/iam/IAMDataTable";
 import PageTitle from "@/components/PageTitle";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";

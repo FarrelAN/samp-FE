@@ -14,6 +14,15 @@ export const getCase = async (): Promise<CaseType[]> => {
     return null as unknown as CaseType[];
   }
 };
+export const getCaseByID = async (id: string): Promise<CaseType | null> => {
+  try {
+    const response = await axios.get(`${apiBaseUrl}/case/${id}`);
+    return response.data;
+  } catch (error: any) {
+    console.error(`Error getting case with ID ${id}`, error.message);
+    return null;
+  }
+};
 
 export const getIAMCase = async (): Promise<CaseType[]> => {
   try {

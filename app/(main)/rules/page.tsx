@@ -27,7 +27,7 @@ export default function SOCPage() {
   const rules = rulesData;
 
   return (
-    <div className="h-screen w-full bg:mandiriGrey">
+    <div className="h-screen w-full bg:mandir">
       <div className="flex flex-row items-center gap-1">
         <img
           src={sampLogo.src}

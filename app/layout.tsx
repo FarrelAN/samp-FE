@@ -38,10 +38,7 @@ export default async function RootLayout({
   return (
     <html lang="en" className={`${myriad.variable} font-sans`}>
       <body
-        className={cn(
-          "min-h-screen w-full bg-white text-black flex",
-          myriad.className
-        )}
+        className={cn("min-h-screen w-full text-black flex", myriad.className)}
       >
         <ClientRootLayout session={session}>{children}</ClientRootLayout>
       </body>

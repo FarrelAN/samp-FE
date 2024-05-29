@@ -43,7 +43,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../../ui/select";
+} from "../ui/select";
 
 import {
   ChevronLeftIcon,
@@ -100,10 +100,6 @@ const DataTable: FC<DataTableProps> = ({ data }) => {
       rowSelection,
     },
   });
-
-  const handleRowClick = (rowId: string) => {
-    setExpandedRow((prev) => (prev === rowId ? null : rowId));
-  };
 
   return (
     <div className="w-full mt-4 border-2 rounded-xl p-10 ">
@@ -182,123 +178,25 @@ const DataTable: FC<DataTableProps> = ({ data }) => {
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <React.Fragment key={row.id}>
-                  <TableRow
-                    className={`hover:bg-mandiriSkyBlue/40 transition-all ease-in-out duration-500 text-s hover:cursor-pointer hover:rounded-sm text-center ${
-                      expandedRow === row.id
-                        ? "bg-mandiriYellow-500/75 hover:bg-mandiriYellow-500/50"
-                        : ""
-                    }`}
-                    key={row.id}
-                    data-state={row.getIsSelected() && "selected"}
-                    onClick={() => handleRowClick(row.id)}
-                  >
-                    {row.getVisibleCells().map((cell, index) => {
-                      let className = "py-4";
-                      if (index === 0) {
-                        className += " rounded-l-xl";
-                      }
-                      if (index === row.getVisibleCells().length - 1) {
-                        className += " rounded-r-xl";
-                      }
-                      return (
-                        <TableCell key={cell.id} className={className}>
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </TableCell>
-                      );
-                    })}
-                  </TableRow>
-                  {expandedRow === row.id && (
-                    <TableRow>
-                      <TableCell colSpan={SOCTableColumns.length}>
-                        <div
-                          className={`expandable-content ${
-                            expandedRow === row.id ? "expanded" : "collapsed"
-                          } rounded-xl text-mandiriWhite flex transition-all duration-500 ease-in-out`}
-                          style={{
-                            background: "#192E52",
-                            backdropFilter: "blur(10px)",
-                            border: "1px solid rgba(255, 255, 255, 0.2)",
-                          }}
-                        >
-                          <div className="w-3/4 pr-4">
-                            <h2 className="font-bold text-lg">Case Details</h2>
-                            <div className="py-2 ml-5 text-md">
-                              <p className="flex">
-                                <span className="font-semibold w-40">
-                                  Model Severity:
-                                </span>
-                                <span className="uppercase">
-                                  {row.original.case_severity}
-                                </span>
-                              </p>
-                              <p className="flex">
-                                <span className="font-semibold w-40">
-                                  Data Source:
-                                </span>
-                                <span>{row.original.data_processor}</span>
-                              </p>
-                              <p className="flex">
-                                <span className="font-semibold w-40">
-                                  Created:
-                                </span>
-                                <span>{row.original.created_at}</span>
-                              </p>
-                              <p className="flex">
-                                <span className="font-semibold w-40">
-                                  Owner:
-                                </span>
-                                <span className="capitalize">
-                                  {row.original.owners}
-                                </span>
-                              </p>
-                              <p className="flex">
-                                <span className="font-semibold w-40">
-                                  Associated Insight:
-                                </span>
-                                <span>{row.original.associated_insight}</span>
-                              </p>
-                              <p className="flex">
-                                <span className="font-semibold w-40">
-                                  Impact Scope:
-                                </span>
-                                <span>{row.original.impact_scope}</span>
-                              </p>
-                              <p className="flex">
-                                <span className="font-semibold w-40">IP:</span>
-                                <span>{row.original.ip_address}</span>
-                              </p>
-                              <p className="flex">
-                                <span className="font-semibold w-40">Mac:</span>
-                                <span>{row.original.mac_address}</span>
-                              </p>
-                            </div>
-                          </div>
-                          <div className="w-1/4 border-l pl-4 flex flex-col items-center">
-                            <Button
-                              onClick={() => handleCaseReview(row.original._id)}
-                              className="mb-2"
-                            >
-                              Finish Investigation
-                            </Button>
-                            <Button onClick={() => alert("Edit")}>Edit</Button>
-                            <Button className="mt-2">Delete</Button>
-                          </div>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </React.Fragment>
+                <TableRow
+                  className="hover:mandiriBlue-400/40 ease-in-out duration-500 text-xs hover:cursor-pointer hover:rounded-xl text-center"
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                  onClick={() => router.push(`/iam/cases/${row.original._id}`)}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id} className="py-4">
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={SOCTableColumns.length}
-                  className="h-24 text-center hover:rounded-xl"
-                >
+                <TableCell colSpan={data.length} className="h-24 text-center">
                   No results.
                 </TableCell>
               </TableRow>
