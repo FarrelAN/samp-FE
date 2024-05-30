@@ -1,5 +1,5 @@
 "use client";
-import React, { FC, useState, useEffect } from "react";
+import React, { FC, useState } from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -81,6 +81,8 @@ const DataTable: FC<DataTableProps> = ({ data }) => {
   });
   const [rowSelection, setRowSelection] = useState({});
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
+  const [selectedFilterColumn, setSelectedFilterColumn] =
+    useState("model_name");
 
   const table = useReactTable({
     data,
@@ -102,22 +104,43 @@ const DataTable: FC<DataTableProps> = ({ data }) => {
   });
 
   return (
-    <div className="w-full mt-4 border-2 rounded-xl p-10 ">
-      <div className="font-bold text-xl text-mandiriBlue-950">
+    <div className="w-full mt-4 border-2 rounded-xl p-10">
+      <div className="font-bold text-xl text-mandiriBlue-950 pb-5">
         <h1>Workstation</h1>
       </div>
-      <div className="flex items-center py-4 text-mandiriWhite">
-        <BiSearchAlt className="text-xl translate-x-9 fill-mandiriWhite " />
-        <Input
-          placeholder="Filter Cases by ID"
-          value={
-            (table.getColumn("model_name")?.getFilterValue() as string) ?? ""
-          }
-          onChange={(event) =>
-            table.getColumn("model_name")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm pl-12 bg-mandiriBlue-250 text-mandiriWhite rounded-full"
-        />
+      <div className="flex flex-row gap-4 pb-3">
+        <div className="flex items-center text-mandiriWhite w-full">
+          <Select
+            value={selectedFilterColumn}
+            onValueChange={setSelectedFilterColumn}
+          >
+            <SelectTrigger className="h-8 text-mandiriBlue-950 w-[200px]">
+              <SelectValue placeholder={selectedFilterColumn} />
+            </SelectTrigger>
+            <SelectContent side="top">
+              <SelectItem value="model_name">Search by Model Name</SelectItem>
+              <SelectItem value="impact_scope">
+                Search by Impact Scope
+              </SelectItem>
+            </SelectContent>
+          </Select>
+          <BiSearchAlt className="text-xl translate-x-9 fill-mandiriBlue-950 text-black" />
+          <Input
+            placeholder={`Filter Cases by ${selectedFilterColumn}`}
+            value={
+              (table
+                .getColumn(selectedFilterColumn)
+                ?.getFilterValue() as string) ?? ""
+            }
+            onChange={(event) =>
+              table
+                .getColumn(selectedFilterColumn)
+                ?.setFilterValue(event.target.value)
+            }
+            className="max-w-sm pl-12 bg-mandiriBlue-250 text-black rounded-full"
+          />
+        </div>
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
@@ -147,6 +170,7 @@ const DataTable: FC<DataTableProps> = ({ data }) => {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+
       <div className=" text-light_brown rounded-lg ">
         <Table className="font-dm-sans ">
           <TableHeader className="">

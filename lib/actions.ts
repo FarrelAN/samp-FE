@@ -97,3 +97,25 @@ export const handleCaseReview = async (caseId: string) => {
     alert("Failed to update case status");
   }
 };
+
+export const getAllResponse = async (): Promise<CaseType[]> => {
+  try {
+    const response = await axios.get(`${apiBaseUrl}/feedback`);
+    return response.data.filter(
+      (caseItem: CaseType) => caseItem.case_status.toLowerCase() !== "closed"
+    );
+  } catch (error: any) {
+    console.error(`Error getting cases`, error.message);
+    return null as unknown as CaseType[];
+  }
+};
+
+export const getResponseByID = async (id: string): Promise<CaseType | null> => {
+  try {
+    const response = await axios.get(`${apiBaseUrl}/feedback/${id}`);
+    return response.data;
+  } catch (error: any) {
+    console.error(`Error getting user response with ID ${id}`, error.message);
+    return null;
+  }
+};

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { CaseType } from "@/lib/types";
 import {
   Chart as ChartJS,
@@ -12,9 +12,8 @@ import {
 } from "chart.js";
 
 import PageTitle from "@/components/PageTitle";
-
 import { sampLogo } from "@/public/assets";
-import { Pie, Bar } from "react-chartjs-2";
+import { Pie } from "react-chartjs-2";
 import "react-circular-progressbar/dist/styles.css";
 
 ChartJS.register(
@@ -28,9 +27,10 @@ ChartJS.register(
 
 interface CaseDetailsProps {
   caseData: CaseType;
+  response: any; // Adjust the type based on your actual response structure
 }
 
-const CaseDetails: React.FC<CaseDetailsProps> = ({ caseData }) => {
+const CaseDetails: React.FC<CaseDetailsProps> = ({ caseData, response }) => {
   const score = parseInt(String(caseData.case_score));
 
   const pieData = {
@@ -55,20 +55,40 @@ const CaseDetails: React.FC<CaseDetailsProps> = ({ caseData }) => {
     return name;
   };
 
-  const defaultMessage = `Hello, ${truncateImpactScope(
-    caseData.impact_scope
-  )}. Your case with ID ${
-    caseData._id
-  } has been updated. The current status is: ${
-    caseData.case_status
-  }. Please check your account for more details.`;
+  const defaultMessage = `Semangat Pagi Mandirian!\n\nKami menemukan aktivitas yang mencurigakan terkait dengan akun kerja anda. Oleh karena itu, akun anda sekarang telah di deaktivasi. Untuk menindaklanjuti kasus ini, mohon untuk segera mengisi formulir berikut: 
+  \nID Case (copy ID ini ke forms yang ada):\n${caseData._id}
+  \nLink Forms Pengisian:\nhttps://forms.office.com/r/rw2LBjTMmm
+  \nSalam dan terima kasih atas perhatian Anda,
+  \nTim DTP Security, CISO Group.`;
 
   const [whatsappMessage, setWhatsappMessage] = useState(defaultMessage);
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [isNoticeSent, setIsNoticeSent] = useState(!!response); // Set based on response
 
   const handleInputChange = (e: any) => {
     setWhatsappMessage(e.target.value);
   };
 
+  const handlePhoneNumberChange = (e: any) => {
+    setPhoneNumber(e.target.value);
+  };
+
+  const handleSendMessage = async () => {
+    // Implement the logic to send WhatsApp message here
+    // For example, you can use Twilio API or other services
+    setIsNoticeSent(true);
+  };
+
+  const convertNewlinesToBr = (text: string) => {
+    return text.split("\n").map((str, index) => (
+      <span key={index}>
+        {str}
+        <br />
+      </span>
+    ));
+  };
+
+  console.log(response);
   return (
     <div className="h-screen w-full bg:mandiriGrey">
       <div className="flex flex-row items-center gap-1 pb-3">
@@ -123,7 +143,7 @@ const CaseDetails: React.FC<CaseDetailsProps> = ({ caseData }) => {
 
             {/* Highlights Section */}
             <div className="bg-white rounded-lg shadow-md p-8 h-fit">
-              <h2 className="text-2xl font-semibold text-indigo-900 mb-6 ">
+              <h2 className="text-2xl font-semibold text-indigo-900 mb-6">
                 Highlights
               </h2>
               <div className="space-y-4">
@@ -199,34 +219,67 @@ const CaseDetails: React.FC<CaseDetailsProps> = ({ caseData }) => {
 
         {/* Right Section */}
         <div className="w-1/3 space-y-8">
-          <div className="bg-white rounded-lg shadow-md p-8">
-            <h2 className="text-2xl font-semibold text-indigo-900 mb-6">
-              WhatsApp Message Preview
-            </h2>
-            <textarea
-              className="w-full p-4 border-2 border-gray-300 rounded-lg bg-gray-100 mb-4"
-              rows={parseInt("4")}
-              value={whatsappMessage}
-              onChange={handleInputChange}
-            />
-            <div
-              className="p-4 border-2 border-gray-300 rounded-lg"
-              style={{ backgroundColor: "#121212" }}
-            >
-              <div className="flex items-start space-x-2">
-                <div
-                  className="p-2 rounded-lg text-white"
-                  style={{ backgroundColor: "#25D366" }}
-                >
-                  <p>{whatsappMessage}</p>
+          {!isNoticeSent && !response ? (
+            <div className="bg-white rounded-lg shadow-md p-8">
+              <h2 className="text-2xl font-semibold text-indigo-900 mb-6">
+                Send WhatsApp Message
+              </h2>
+              <div
+                className="p-4 border-2 border-gray-300 rounded-lg mb-4"
+                style={{ backgroundColor: "#121212" }}
+              >
+                <div className="flex items-start space-x-2">
+                  <div
+                    className="p-2 rounded-lg text-white"
+                    style={{ backgroundColor: "#25D366" }}
+                  >
+                    {convertNewlinesToBr(whatsappMessage)}
+                  </div>
                 </div>
               </div>
+              <div className="space-y-4">
+                <textarea
+                  className="w-full p-4 border-2 border-gray-300 rounded-lg bg-gray-100 "
+                  rows={4}
+                  placeholder="Enter message"
+                  value={whatsappMessage}
+                  onChange={handleInputChange}
+                />
+                <input
+                  type="text"
+                  className="w-full p-4 border-2 border-gray-300 rounded-lg bg-gray-100 mb-4"
+                  placeholder="Enter phone number"
+                  value={phoneNumber}
+                  onChange={handlePhoneNumberChange}
+                />
+                <button
+                  className="bg-indigo-900 text-white py-3 px-6 rounded-lg hover:bg-indigo-700 transition"
+                  onClick={handleSendMessage}
+                >
+                  Send Notice to User
+                </button>
+              </div>
             </div>
-
-            <button className="bg-indigo-900 text-white mt-3 py-3 px-6 rounded-lg hover:bg-indigo-700 transition">
-              Send Notice to User
-            </button>
-          </div>
+          ) : isNoticeSent && !response ? (
+            <div className="bg-white rounded-lg shadow-md p-8">
+              <h2 className="text-2xl font-semibold text-indigo-900 mb-6">
+                Notice has been sent to user
+              </h2>
+            </div>
+          ) : (
+            <div className="bg-white rounded-lg shadow-md p-8">
+              <h2 className="text-2xl font-semibold text-indigo-900 mb-6">
+                User has completed the form
+              </h2>
+              <p>
+                <strong>Response:</strong> {response && response.some_field}{" "}
+                {/* Adjust the field */}
+              </p>
+              <button className="bg-indigo-900 text-white py-3 px-6 rounded-lg hover:bg-indigo-700 transition">
+                Close Case
+              </button>
+            </div>
+          )}
 
           {/* Actions Section */}
           <div className="bg-white rounded-lg shadow-md p-8">

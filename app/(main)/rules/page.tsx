@@ -34,7 +34,7 @@ export default function SOCPage() {
           alt="Bank Mandiri Logo"
           className="w-[90px] aspect-auto"
         />
-        <PageTitle title="Security Dashboard: Security Operations Center Team" />
+        <PageTitle title="Security Dashboard" />
       </div>
 
       <h1>Welcome, {userName}</h1>

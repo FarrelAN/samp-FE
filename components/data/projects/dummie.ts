@@ -20,7 +20,7 @@ export const rulesData: RuleSetType[] = [
   },
   {
     risk_factor: "Account Compromise",
-    risk_event: "Potential Impersonation Attempt -Atypical Travel",
+    risk_event: "Potential Impersonation Attempt - Atypical Travel",
     most_impacted_assets: 83,
     real_time_score: 1.0,
     remediation:
