@@ -9,6 +9,7 @@ import {
   Settings,
   LogOut,
   BookOpenText,
+  BookText,
 } from "lucide-react";
 
 type Props = {
@@ -41,6 +42,12 @@ export default function SidenavBar({ isCollapsed, setIsCollapsed }: Props) {
             title: "Rules",
             href: "/rules",
             icon: BookOpenText,
+            variant: "ghost",
+          },
+          {
+            title: "Responses",
+            href: "/responses",
+            icon: BookText,
             variant: "ghost",
           },
         ]}

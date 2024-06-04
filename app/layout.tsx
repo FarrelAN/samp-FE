@@ -6,6 +6,8 @@ import authOptions from "../pages/api/auth/[...nextauth]";
 import ClientRootLayout from "./ClientRootLayout";
 import { cn } from "../lib/utils";
 import localFont from "next/font/local";
+import { Toaster } from "@/components/ui/toaster";
+import footer from "@/components/footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -41,6 +43,7 @@ export default async function RootLayout({
         className={cn("min-h-screen w-full text-black flex", myriad.className)}
       >
         <ClientRootLayout session={session}>{children}</ClientRootLayout>
+        <Toaster />
       </body>
     </html>
   );

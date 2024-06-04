@@ -1,5 +1,5 @@
 import axios from "axios";
-import { CaseType } from "./types";
+import { CaseType, ResponseType } from "./types";
 
 const apiBaseUrl = process.env.API_BASE_URL || "";
 
@@ -98,24 +98,45 @@ export const handleCaseReview = async (caseId: string) => {
   }
 };
 
-export const getAllResponse = async (): Promise<CaseType[]> => {
+export const getAllResponse = async (): Promise<ResponseType[]> => {
   try {
     const response = await axios.get(`${apiBaseUrl}/feedback`);
+
     return response.data.filter(
-      (caseItem: CaseType) => caseItem.case_status.toLowerCase() !== "closed"
+      (responseItem: ResponseType) =>
+        responseItem.user_ad && // Check if user_ad exists and is not empty
+        responseItem.user_ad.trim() !== "" &&
+        responseItem.nama_lengkap &&
+        responseItem.nama_lengkap.trim() !== ""
     );
   } catch (error: any) {
-    console.error(`Error getting cases`, error.message);
-    return null as unknown as CaseType[];
+    console.error("Error getting responses:", error.message);
+    return []; // Return an empty array in case of an error
   }
 };
 
-export const getResponseByID = async (id: string): Promise<CaseType | null> => {
+export const getResponseByID = async (
+  id: string
+): Promise<ResponseType | null> => {
   try {
     const response = await axios.get(`${apiBaseUrl}/feedback/${id}`);
     return response.data;
   } catch (error: any) {
     console.error(`Error getting user response with ID ${id}`, error.message);
+    return null;
+  }
+};
+
+export const sendMessage = async (toNumber: string, message: string) => {
+  try {
+    const response = await axios.post(`http://localhost:8000/message`, {
+      to_number: toNumber,
+      message,
+    });
+    console.log(response.data);
+    return response.data;
+  } catch (error: any) {
+    console.error(`Error sending message`, error.message);
     return null;
   }
 };

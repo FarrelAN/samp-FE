@@ -27,3 +27,18 @@ export type CaseType = {
   ip_address: string;
   mac_address: string;
 };
+
+export type ResponseType = {
+  _id: string;
+  nama_lengkap: string;
+  user_ad: string;
+  email: string;
+  no_wa: string;
+  departemen_tim: string;
+  id_kasus: string;
+  deskripsi_aktivitas: string;
+  mengetahui_aktivitas: string;
+  membagikan_info_login: string;
+  menggunakan_vpn: string;
+  membuka_tautan_mencurigakan: string;
+};

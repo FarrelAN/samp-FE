@@ -2,7 +2,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { CaseType, RuleSetType } from "@/lib/types";
+import { CaseType, ResponseType, RuleSetType } from "@/lib/types";
 
 const severitySort = (rowA: any, rowB: any, columnId: string) => {
   const severityOrder: { [key: string]: number } = {
@@ -328,5 +328,61 @@ export const RuleSetColumns: ColumnDef<RuleSetType>[] = [
       return <div className="pl-0.5">{remediations}</div>;
     },
     size: 250, // Reduce the width for "Remediation"
+  },
+];
+
+export const ResponsesColumns: ColumnDef<ResponseType>[] = [
+  {
+    accessorKey: "nama_lengkap",
+    header: "Nama Pegawai",
+    cell: ({ row }) => (
+      <div className="flex items-center justify-center px-5">
+        <div
+          className="flex items-center py-1 px-2 rounded-md bg-orange-400 text-white"
+          style={{ whiteSpace: "nowrap" }}
+        >
+          <div className="capitalize font-semibold">
+            {row.original.nama_lengkap}
+          </div>
+        </div>
+      </div>
+    ),
+    size: 200,
+  },
+  {
+    accessorKey: "user_ad",
+    header: "User AD",
+    cell: ({ row }) => <div className="px-5">{row.original.user_ad}</div>,
+    size: 200,
+  },
+  {
+    accessorKey: "email",
+    header: "Email",
+    cell: ({ row }) => <div className="px-5">{row.original.email}</div>,
+    size: 250,
+  },
+  {
+    accessorKey: "no_wa",
+    header: "Nomor WA",
+    cell: ({ row }) => <div className="px-5">{row.original.no_wa}</div>,
+    size: 150,
+  },
+  {
+    accessorKey: "departemen_tim",
+    header: "Departemen/Tim",
+    cell: ({ row }) => (
+      <div className="px-5">{row.original.departemen_tim}</div>
+    ),
+    size: 150,
+  },
+  {
+    accessorKey: "deskripsi_aktivitas",
+    header: "Deskripsi Aktivitas",
+    cell: ({ row }) => (
+      <div className="px-5 whitespace-pre-line">
+        {row.original.deskripsi_aktivitas}
+      </div>
+    ),
+    size: 300,
   },
 ];

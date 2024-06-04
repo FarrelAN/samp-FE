@@ -98,9 +98,12 @@ export default function Login() {
           </div>
         </div>
       </div>
-      <footer className="w-full py-6 px-8 bg-mandiriBlue-950  text-right text-sm text-white">
-        ©{new Date().getFullYear()} PT Bank Mandiri Persero Tbk. All rights
-        reserved.
+      <footer className="w-full py-6 px-8 bg-mandiriBlue-950 text-sm text-white flex justify-between items-center">
+        <div>
+          ©{new Date().getFullYear()} Digital Talent Program - PT Bank Mandiri
+          Persero Tbk.
+        </div>
+        <div>All rights reserved.</div>
       </footer>
     </div>
   );
