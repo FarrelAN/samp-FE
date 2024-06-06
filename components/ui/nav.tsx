@@ -12,6 +12,15 @@ import {
 } from "@/components/ui/tooltip";
 import { usePathname } from "next/navigation";
 import logo from "@/public/assets/images/logo2.png";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface NavProps {
   isCollapsed: boolean;

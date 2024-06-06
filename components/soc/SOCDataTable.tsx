@@ -1,5 +1,5 @@
 "use client";
-import React, { FC, useState, useEffect } from "react";
+import React, { FC, useState } from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -24,6 +24,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Label } from "@/components/ui/label";
 
 import { Input } from "@/components/ui/input";
 
@@ -43,7 +44,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../../ui/select";
+} from "@/components/ui/select";
 
 import {
   ChevronLeftIcon,
@@ -59,6 +60,20 @@ import { SOCTableColumns } from "@/components/table/column";
 
 import { CaseType } from "@/lib/types";
 import { handleCaseClosed, handleSendToResolver } from "@/lib/actions";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+
+interface ExtendedCaseType extends CaseType {
+  caseId: string;
+  formattedDescription: string;
+}
 
 Aos.init();
 
@@ -74,7 +89,14 @@ const DataTable: FC<DataTableProps> = ({ data }) => {
     _id: false,
   });
   const [rowSelection, setRowSelection] = useState({});
-  const [expandedRow, setExpandedRow] = useState<string | null>(null);
+  const [selectedRowData, setSelectedRowData] =
+    useState<ExtendedCaseType | null>(null);
+
+  const handleRowClick = (rowData: CaseType) => {
+    const [caseId, description] = rowData.model_name.split(" (");
+    const formattedDescription = `(${description}`;
+    setSelectedRowData({ ...rowData, caseId, formattedDescription });
+  };
 
   const table = useReactTable({
     data,
@@ -95,17 +117,13 @@ const DataTable: FC<DataTableProps> = ({ data }) => {
     },
   });
 
-  const handleRowClick = (rowId: string) => {
-    setExpandedRow((prev) => (prev === rowId ? null : rowId));
-  };
-
   return (
     <div className="w-full mt-4 border-2 rounded-xl p-10 ">
       <div className="font-bold text-xl text-mandiriBlue-950">
         <h1>Workstation</h1>
       </div>
       <div className="flex items-center py-4">
-        <BiSearchAlt className="text-xl translate-x-9 fill-mandiriWhite " />
+        <BiSearchAlt className="text-xl translate-x-9 fill-mandiriBlue-950 z-20 " />
         <Input
           placeholder="Filter Cases by ID"
           value={
@@ -114,8 +132,9 @@ const DataTable: FC<DataTableProps> = ({ data }) => {
           onChange={(event) =>
             table.getColumn("model_name")?.setFilterValue(event.target.value)
           }
-          className="max-w-sm pl-12 bg-mandiriBlue-550 fill-mandiriWhite text-mandiriWhite rounded-full"
+          className="max-w-sm pl-12 bg-white  text-mandiriBlue-950 rounded-full border-mandiriYellow-500/60 border-2 focus:border-mandiriYellow-500 focus:outline-none transition-all ease-in-out duration-500"
         />
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
@@ -178,14 +197,10 @@ const DataTable: FC<DataTableProps> = ({ data }) => {
               table.getRowModel().rows.map((row) => (
                 <React.Fragment key={row.id}>
                   <TableRow
-                    className={`hover:bg-mandiriSkyBlue/40 transition-all ease-in-out duration-500 text-s hover:cursor-pointer hover:rounded-sm text-center ${
-                      expandedRow === row.id
-                        ? "bg-mandiriYellow-500/80 hover:bg-mandiriYellow-500/50"
-                        : ""
-                    }`}
+                    className={`hover:bg-mandiriSkyBlue/40 transition-all ease-in-out duration-500 text-s hover:cursor-pointer hover:rounded-sm text-center`}
                     key={row.id}
                     data-state={row.getIsSelected() && "selected"}
-                    onClick={() => handleRowClick(row.id)}
+                    onClick={() => handleRowClick(row.original)}
                   >
                     {row.getVisibleCells().map((cell, index) => {
                       let className = "py-4";
@@ -205,93 +220,6 @@ const DataTable: FC<DataTableProps> = ({ data }) => {
                       );
                     })}
                   </TableRow>
-                  {expandedRow === row.id && (
-                    <TableRow>
-                      <TableCell colSpan={SOCTableColumns.length}>
-                        <div
-                          className={`expandable-content ${
-                            expandedRow === row.id ? "expanded" : "collapsed"
-                          } rounded-xl text-mandiriWhite flex transition-all duration-500 ease-in-out`}
-                          style={{
-                            background: "#192E52",
-                            backdropFilter: "blur(10px)",
-                            border: "1px solid rgba(255, 255, 255, 0.2)",
-                          }}
-                        >
-                          <div className="w-3/4 pr-4">
-                            <h2 className="font-bold text-lg">Case Details</h2>
-                            <div className="py-2 ml-5 text-md">
-                              <p className="flex">
-                                <span className="font-semibold w-40">
-                                  Model Severity:
-                                </span>
-                                <span className="uppercase">
-                                  {row.original.case_severity}
-                                </span>
-                              </p>
-                              <p className="flex">
-                                <span className="font-semibold w-40">
-                                  Data Source:
-                                </span>
-                                <span>{row.original.data_processor}</span>
-                              </p>
-                              <p className="flex">
-                                <span className="font-semibold w-40">
-                                  Created:
-                                </span>
-                                <span>{row.original.created_at}</span>
-                              </p>
-                              <p className="flex">
-                                <span className="font-semibold w-40">
-                                  Owner:
-                                </span>
-                                <span className="capitalize">
-                                  {row.original.owners}
-                                </span>
-                              </p>
-                              <p className="flex">
-                                <span className="font-semibold w-40">
-                                  Associated Insight:
-                                </span>
-                                <span>{row.original.associated_insight}</span>
-                              </p>
-                              <p className="flex">
-                                <span className="font-semibold w-40">
-                                  Impact Scope:
-                                </span>
-                                <span>{row.original.impact_scope}</span>
-                              </p>
-                              <p className="flex">
-                                <span className="font-semibold w-40">IP:</span>
-                                <span>{row.original.ip_address}</span>
-                              </p>
-                              <p className="flex">
-                                <span className="font-semibold w-40">Mac:</span>
-                                <span>{row.original.mac_address}</span>
-                              </p>
-                            </div>
-                          </div>
-                          <div className="w-1/4 border-l pl-4 flex flex-col items-center justify-center">
-                            <Button
-                              onClick={() =>
-                                handleSendToResolver(row.original._id)
-                              }
-                              className="mb-2"
-                            >
-                              Send to Resolver
-                            </Button>
-                            <Button onClick={() => alert("Edit")}>Edit</Button>
-                            <Button
-                              onClick={() => handleCaseClosed(row.original._id)}
-                              className="mt-2"
-                            >
-                              Close Case
-                            </Button>
-                          </div>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  )}
                 </React.Fragment>
               ))
             ) : (
@@ -375,6 +303,86 @@ const DataTable: FC<DataTableProps> = ({ data }) => {
           </Button>
         </div>
       </div>
+
+      {selectedRowData && (
+        <Dialog
+          open={!!selectedRowData}
+          onOpenChange={() => setSelectedRowData(null)}
+        >
+          <DialogContent className="w-[500px] bg-white ">
+            <DialogHeader>
+              <DialogTitle className="font-bold">Case Details</DialogTitle>
+              <DialogDescription>
+                What actions would you like to take on this case?
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4 font-bold ">
+                <Label className="text-right">Case ID</Label>
+                <div className="col-span-3">{selectedRowData?.caseId}</div>
+              </div>
+              <div className="grid grid-cols-4 items-start gap-4 font-bold">
+                <Label className="text-right mt-2">Description</Label>
+                <div className="col-span-3">
+                  {selectedRowData?.formattedDescription}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label className="text-right">Impact Scope</Label>
+                <div className="col-span-3">
+                  {selectedRowData?.impact_scope}
+                </div>
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label className="text-right">Case Severity</Label>
+                <div className="col-span-3">
+                  {selectedRowData?.case_severity.toUpperCase()}
+                </div>
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label className="text-right">Data Source</Label>
+                <div className="col-span-3">{selectedRowData?.data_source}</div>
+              </div>
+
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label className="text-right">Associated Insight</Label>
+                <div className="col-span-3">
+                  {selectedRowData?.associated_insight}
+                </div>
+              </div>
+              <div className="grid grid-cols-4 items-start gap-4">
+                <Label className="text-right mt-1">Information</Label>
+                <div className="col-span-3">
+                  {selectedRowData?.highlight_information}
+                </div>
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label className="text-right">IP Address</Label>
+                <div className="col-span-3">{selectedRowData?.ip_address}</div>
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label className="text-right">MAC Address</Label>
+                <div className="col-span-3">{selectedRowData?.mac_address}</div>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button
+                onClick={() => handleSendToResolver(selectedRowData?._id)}
+                className="mb-2 bg-mandiriBlue-950 hover:bg-mandiriBlue-900"
+              >
+                Send to Resolver
+              </Button>
+              <Button
+                onClick={() => handleCaseClosed(selectedRowData?._id)}
+                className="bg-mandiriBlue-950 hover:bg-mandiriBlue-900"
+              >
+                Close Case
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 };

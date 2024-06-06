@@ -1,7 +1,7 @@
 // components/pages/AdminPage.tsx
 "use client";
 import React, { useEffect, useState } from "react";
-import DataTable from "@/components/iam/IAMDataTable";
+import DataTable from "@/components/soc/SOCDataTable";
 import PageTitle from "@/components/PageTitle";
 import { useSession } from "next-auth/react";
 import { redirect, usePathname, useRouter } from "next/navigation";
@@ -26,7 +26,7 @@ interface HomeProps {
   cases: CaseType[];
 }
 
-export default function IAMPage({ cases }: HomeProps) {
+export default function SOCPage({ cases }: HomeProps) {
   const { data: session, status } = useSession();
   const router = useRouter();
   const pathname = usePathname();
@@ -41,7 +41,7 @@ export default function IAMPage({ cases }: HomeProps) {
     if (status === "authenticated") {
       const userDivision = session?.user?.division;
 
-      if (userDivision !== "iam" && userDivision !== "admin") {
+      if (userDivision !== "soc" && userDivision !== "admin") {
         redirect("/unauthorized"); // Redirect to a "not authorized" page or any other page
       }
     }
@@ -51,7 +51,7 @@ export default function IAMPage({ cases }: HomeProps) {
     return <LoadingScreen />; // Use the custom loading screen component
   }
 
-  if (status === "unauthenticated") {
+  if (status === "unauthenticated" || !session) {
     redirect("/signIn");
     return null; // Prevent rendering until redirect happens
   }
@@ -67,9 +67,7 @@ export default function IAMPage({ cases }: HomeProps) {
             alt="Bank Mandiri Logo"
             className="w-[90px] aspect-auto"
           />
-          <PageTitle
-            title={`Security Dashboard: Identity Access & Management Team`}
-          />
+          <PageTitle title="Security Dashboard: Security Operations Center Team" />
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

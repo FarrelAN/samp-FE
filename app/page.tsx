@@ -1,7 +1,7 @@
 "use client";
 import { useSession } from "next-auth/react";
 import { useRouter, redirect } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import LoadingScreen from "@/components/LoadingScreen"; // Your loading screen component
 
 export default function Page() {
@@ -13,7 +13,6 @@ export default function Page() {
   });
 
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (status === "loading") {
@@ -23,15 +22,29 @@ export default function Page() {
 
     if (!session) {
       // No session found, redirect to login
-      router.push("/signIn");
+      redirect("/signIn");
     } else {
-      router.push("/iam");
+      const userDivision = session.user.division;
+      switch (userDivision) {
+        case "iam":
+          redirect("/iam");
+          break;
+        case "soc":
+          redirect("/soc");
+          break;
+        case "gva":
+          redirect("/responses");
+          break;
+        case "admin":
+          redirect("/soc");
+          break;
+        default:
+          redirect("/signIn");
+      }
     }
+  }, [session, status]);
 
-    setLoading(false);
-  }, [session, status, router]);
-
-  if (loading || status === "loading") {
+  if (status === "loading") {
     return <LoadingScreen />;
   }
 

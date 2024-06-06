@@ -1,13 +1,24 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { signIn } from "next-auth/react";
 import logo from "@/public/assets/images/logo2.png";
 import Carousel from "@/components/ui/carousel";
-import bgImage from "@/public/assets/images/bg8.jpg"; // Ensure this path correctly points to your background image
+import { redirect } from "next/navigation";
+import { useSession } from "next-auth/react";
+import bgImage from "@/public/assets/images/bg8.jpg";
+import { sampLogo } from "@/public/assets"; // Ensure this path correctly points to your background image
 
 export default function Login() {
   const [userAD, setUserAD] = useState("");
   const [password, setPassword] = useState("");
+  const { data: session, status } = useSession();
+
+  useEffect(() => {
+    if (session) {
+      redirect("/");
+      return undefined; // Fix: Return undefined instead of null
+    }
+  }, [status, session]);
 
   return (
     <div

@@ -137,7 +137,7 @@ const DataTable: FC<DataTableProps> = ({ data }) => {
                 .getColumn(selectedFilterColumn)
                 ?.setFilterValue(event.target.value)
             }
-            className="max-w-sm pl-12 bg-mandiriBlue-250 text-black rounded-full"
+            className="max-w-sm pl-12 bg-white  text-mandiriBlue-950 rounded-full border-mandiriYellow-500/60 border-2 focus:border-mandiriYellow-500 focus:outline-none transition-all ease-in-out duration-500"
           />
         </div>
 

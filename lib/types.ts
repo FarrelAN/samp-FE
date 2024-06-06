@@ -9,16 +9,13 @@ export type RuleSetType = {
 export type CaseType = {
   _id: string;
   case_status: string;
-  case_score: {
-    type: String;
-  };
+  case_score: string;
   model_name: string;
   case_severity: string;
   impact_scope: string;
-  data_processor: string;
+  data_source: string;
   created_at: string;
-  finding: string;
-  case: string;
+  resolution: string;
   owners: string;
   associated_insight: string;
   highlight_information: string;
@@ -26,6 +23,10 @@ export type CaseType = {
   rules: string;
   ip_address: string;
   mac_address: string;
+  no_waprib: string;
+  job_level: string;
+  logon_attempt: string;
+  location: string;
 };
 
 export type ResponseType = {

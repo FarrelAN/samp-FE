@@ -1,8 +1,8 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Nav } from "./ui/nav";
 import { useWindowWidth } from "@react-hook/window-size";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import {
   LayoutDashboard,
   Users,
@@ -11,6 +11,15 @@ import {
   BookOpenText,
   BookText,
 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 type Props = {
   isCollapsed: boolean;
@@ -20,6 +29,41 @@ type Props = {
 export default function SidenavBar({ isCollapsed, setIsCollapsed }: Props) {
   const onlyWidth = useWindowWidth();
   const mobileWidth = onlyWidth < 768;
+
+  const { data: session } = useSession();
+  const [userDivision, setUserDivision] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (session && session.user) {
+      // Assuming session.user.division contains the division info
+      setUserDivision(session.user.division);
+    }
+  }, [session]);
+
+  const links = [
+    {
+      title: "Dashboard",
+      href: "/",
+      icon: LayoutDashboard,
+      variant: "default" as const,
+    },
+    {
+      title: "Rules",
+      href: "/rules",
+      icon: BookOpenText,
+      variant: "ghost" as const,
+    },
+    ...(userDivision !== "SOC"
+      ? [
+          {
+            title: "Responses",
+            href: "/responses",
+            icon: BookText,
+            variant: "ghost" as const,
+          },
+        ]
+      : []),
+  ];
 
   return (
     <div
@@ -31,26 +75,7 @@ export default function SidenavBar({ isCollapsed, setIsCollapsed }: Props) {
     >
       <Nav
         isCollapsed={mobileWidth ? true : isCollapsed}
-        links={[
-          {
-            title: "Dashboard",
-            href: "/",
-            icon: LayoutDashboard,
-            variant: "default",
-          },
-          {
-            title: "Rules",
-            href: "/rules",
-            icon: BookOpenText,
-            variant: "ghost",
-          },
-          {
-            title: "Responses",
-            href: "/responses",
-            icon: BookText,
-            variant: "ghost",
-          },
-        ]}
+        links={links}
         settingsLink={{
           title: "Settings",
           href: "/settings",

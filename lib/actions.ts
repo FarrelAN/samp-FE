@@ -89,8 +89,7 @@ export const handleCaseReview = async (caseId: string) => {
       case_status: "REVIEW",
     });
     if (response.status === 200) {
-      alert("Case status updated to REVIEW");
-      window.location.reload(); // Reload the page
+      return response.status;
     }
   } catch (error) {
     console.error("Error updating case status:", error);
@@ -100,7 +99,7 @@ export const handleCaseReview = async (caseId: string) => {
 
 export const getAllResponse = async (): Promise<ResponseType[]> => {
   try {
-    const response = await axios.get(`${apiBaseUrl}/feedback`);
+    const response = await axios.get(`${apiBaseUrl}/feedbacks`);
 
     return response.data.filter(
       (responseItem: ResponseType) =>
@@ -119,7 +118,7 @@ export const getResponseByID = async (
   id: string
 ): Promise<ResponseType | null> => {
   try {
-    const response = await axios.get(`${apiBaseUrl}/feedback/${id}`);
+    const response = await axios.get(`${apiBaseUrl}/feedbacks/${id}`);
     return response.data;
   } catch (error: any) {
     console.error(`Error getting user response with ID ${id}`, error.message);
@@ -138,5 +137,17 @@ export const sendMessage = async (toNumber: string, message: string) => {
   } catch (error: any) {
     console.error(`Error sending message`, error.message);
     return null;
+  }
+};
+
+export const analyzeFeedbacks = async (): Promise<string> => {
+  try {
+    const response = await axios.post(
+      `http://localhost:8000/feedbacks/analyze`
+    );
+    return response.data.analysis;
+  } catch (error: any) {
+    console.error("Error analyzing feedbacks", error.message);
+    throw new Error("Failed to analyze feedbacks");
   }
 };
