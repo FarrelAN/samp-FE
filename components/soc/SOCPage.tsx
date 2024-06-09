@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
+import SkeletonLoader from "../skeletonLoader";
 
 interface HomeProps {
   cases: CaseType[];
@@ -39,10 +40,16 @@ export default function SOCPage({ cases }: HomeProps) {
 
   useEffect(() => {
     if (status === "authenticated") {
-      const userDivision = session?.user?.division;
+      const userDivision = session?.user?.division?.toLowerCase();
 
       if (userDivision !== "soc" && userDivision !== "admin") {
-        redirect("/unauthorized"); // Redirect to a "not authorized" page or any other page
+        router.push(
+          `/${
+            userDivision === "soc" || userDivision === "iam"
+              ? userDivision
+              : "soc"
+          }`
+        ); // Redirect to a "not authorized" page or any other page
       }
     }
   }, [status, session]);
@@ -60,6 +67,7 @@ export default function SOCPage({ cases }: HomeProps) {
 
   return (
     <div className="h-screen w-full bg:mandiriGrey">
+      <SkeletonLoader />
       <div className="flex flex-row justify-between">
         <div className="flex flex-row items-center gap-1">
           <img

@@ -338,12 +338,10 @@ export const ResponsesColumns: ColumnDef<ResponseType>[] = [
     cell: ({ row }) => (
       <div className="flex items-center justify-center px-5">
         <div
-          className="flex items-center py-1 px-2 rounded-md bg-orange-400 text-white"
+          className="flex items-center py-1 px-2 rounded-md "
           style={{ whiteSpace: "nowrap" }}
         >
-          <div className="capitalize font-semibold">
-            {row.original.nama_lengkap}
-          </div>
+          <div className="capitalize ">{row.original.nama_lengkap}</div>
         </div>
       </div>
     ),

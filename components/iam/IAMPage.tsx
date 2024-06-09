@@ -1,4 +1,3 @@
-// components/pages/AdminPage.tsx
 "use client";
 import React, { useEffect, useState } from "react";
 import DataTable from "@/components/iam/IAMDataTable";
@@ -21,6 +20,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import SkeletonLoader from "../skeletonLoader";
 
 interface HomeProps {
   cases: CaseType[];
@@ -31,6 +32,7 @@ export default function IAMPage({ cases }: HomeProps) {
   const router = useRouter();
   const pathname = usePathname();
   const [firstPath, setFirstPath] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const path = pathname ? pathname.split("/")[1].toUpperCase() : "";
@@ -38,28 +40,51 @@ export default function IAMPage({ cases }: HomeProps) {
   }, [pathname]);
 
   useEffect(() => {
-    if (status === "authenticated") {
-      const userDivision = session?.user?.division;
+    if (status === "loading") return; // If status is loading, do nothing
+
+    if (status === "authenticated" && session?.user) {
+      const userDivision = session.user.division?.toLowerCase();
+      console.log("User Division:", userDivision); // Debugging line
 
       if (userDivision !== "iam" && userDivision !== "admin") {
-        redirect("/unauthorized"); // Redirect to a "not authorized" page or any other page
+        router.push(
+          `/${
+            userDivision === "soc" || userDivision === "iam"
+              ? userDivision
+              : "soc"
+          }`
+        ); // Redirect to a "not authorized" page or any other page
+      } else {
+        setIsLoading(false); // Set loading to false once the user is authenticated and authorized
       }
+    } else if (status === "unauthenticated") {
+      redirect("/signIn");
     }
-  }, [status, session]);
+  }, [status, session, router]);
 
-  if (status === "loading") {
-    return <LoadingScreen />; // Use the custom loading screen component
-  }
-
-  if (status === "unauthenticated") {
-    redirect("/signIn");
-    return null; // Prevent rendering until redirect happens
+  if (isLoading) {
+    return (
+      <div className="h-screen w-full bg:mandiriGrey p-4">
+        <div className="flex flex-row justify-between">
+          <div className="flex flex-row items-center gap-1">
+            <Skeleton className="h-[90px] w-[90px] rounded" />
+            <Skeleton className="h-8 w-64 rounded" />
+          </div>
+          <Skeleton className="h-10 w-24 rounded" />
+        </div>
+        <Skeleton className="h-8 w-48 mt-4 rounded" />
+        <div className="mt-6">
+          <Skeleton className="h-64 w-full rounded" />
+        </div>
+      </div>
+    );
   }
 
   const userName = session?.user?.username || "admin";
 
   return (
-    <div className="h-screen w-full bg:mandiriGrey">
+    <div className="h-screen w-full bg:mandiriGrey p-4">
+      <SkeletonLoader />
       <div className="flex flex-row justify-between">
         <div className="flex flex-row items-center gap-1">
           <img

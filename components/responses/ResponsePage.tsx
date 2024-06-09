@@ -11,6 +11,7 @@ import { analyzeFeedbacks } from "@/lib/actions"; // Import the API call
 import LoadingScreen from "@/app/(main)/home/page";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -20,15 +21,21 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import jsPDF from "jspdf";
 
 interface HomeProps {
   responses: ResponseType[];
 }
 
-const useTypingEffect = (text: string, speed: number = 50) => {
+const useTypingEffect = (text: string, speed: number = 50, skip: boolean) => {
   const [displayedText, setDisplayedText] = useState("");
 
   useEffect(() => {
+    if (skip) {
+      setDisplayedText(text);
+      return;
+    }
+
     let index = 0;
     const intervalId = setInterval(() => {
       setDisplayedText((prev) => prev + text.charAt(index));
@@ -39,7 +46,7 @@ const useTypingEffect = (text: string, speed: number = 50) => {
     }, speed);
 
     return () => clearInterval(intervalId);
-  }, [text, speed]);
+  }, [text, speed, skip]);
 
   return displayedText;
 };
@@ -50,6 +57,7 @@ export default function ResponsePage({ responses }: HomeProps) {
   const [aiResponse, setAiResponse] = useState<string | null>(null);
   const [rawResponse, setRawResponse] = useState<string | null>(null);
   const [analyzeClicked, setAnalyzeClicked] = useState(false);
+  const [skipTyping, setSkipTyping] = useState(false);
 
   if (status === "loading") {
     return <LoadingScreen />; // Use the custom loading screen component
@@ -64,6 +72,7 @@ export default function ResponsePage({ responses }: HomeProps) {
 
   const handleAnalyzeFeedbacks = async () => {
     setAnalyzeClicked(true);
+    setSkipTyping(false);
     try {
       const analysis = await analyzeFeedbacks();
       console.log("Analysis:", analysis); // Log the analysis to the console (for debugging purposes)
@@ -74,7 +83,21 @@ export default function ResponsePage({ responses }: HomeProps) {
     }
   };
 
-  const typedResponse = useTypingEffect(rawResponse || "", 50);
+  const typedResponse = useTypingEffect(rawResponse || "", 50, skipTyping);
+
+  const handleSkipTyping = () => {
+    setSkipTyping(true);
+  };
+
+  const handleDownloadPDF = () => {
+    const doc = new jsPDF();
+    const date = new Date().toLocaleDateString();
+    const responseText = rawResponse || "";
+    const lines = doc.splitTextToSize(responseText, 180); // Adjust the width to fit the text
+    doc.text(`SAMP Case Analysis: ${date}`, 10, 10);
+    doc.text(`Analysis\n${lines.join("\n")}`, 10, 20);
+    doc.save("AI_Case_Analysis.pdf");
+  };
 
   return (
     <div className="h-screen w-full bg:mandiriGrey">
@@ -110,10 +133,22 @@ export default function ResponsePage({ responses }: HomeProps) {
                 Generate AI Analysis of the feedbacks from the users.
               </DialogDescription>
             </DialogHeader>
-            <div className="mt-4 w-[600px]">
+            <div className=" w-[600px]">
               {analyzeClicked ? (
                 rawResponse ? (
-                  <p className="whitespace-pre-line">{typedResponse}</p>
+                  <div>
+                    <p className="whitespace-pre-line">{typedResponse}</p>
+                    {!skipTyping &&
+                      typedResponse.length < rawResponse.length && (
+                        <Button
+                          onClick={handleSkipTyping}
+                          className="text-xs "
+                          variant="link"
+                        >
+                          Skip
+                        </Button>
+                      )}
+                  </div>
                 ) : (
                   <div className="flex flex-col space-y-3">
                     <Skeleton className="h-4 w-[700px]" />
@@ -127,7 +162,14 @@ export default function ResponsePage({ responses }: HomeProps) {
               <Button onClick={handleAnalyzeFeedbacks}>
                 Analyze Feedbacks
               </Button>
-              <Button onClick={() => setAiResponse(null)}>Close</Button>
+              {rawResponse && (
+                <Button onClick={handleDownloadPDF} className="mr-auto">
+                  Download PDF
+                </Button>
+              )}
+              <DialogClose asChild>
+                <Button onClick={() => setAiResponse(null)}>Close</Button>
+              </DialogClose>
             </DialogFooter>
           </DialogContent>
         </Dialog>

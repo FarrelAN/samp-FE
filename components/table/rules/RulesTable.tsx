@@ -116,7 +116,7 @@ const DataTable: FC<DataTableProps> = ({ data }) => {
               <TableRow className="b" key={headerGroup.id}>
                 {headerGroup.headers.map((header, index) => {
                   let className =
-                    "text-center text-black italic border-y-2 border-black/30";
+                    "text-center text-mandiriBlue-950 italic border-y-2 border-mandiriBlue-950/50 font-semibold";
                   return (
                     <TableHead key={header.id} className={className}>
                       {header.isPlaceholder

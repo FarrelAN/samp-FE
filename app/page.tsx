@@ -2,7 +2,7 @@
 import { useSession } from "next-auth/react";
 import { useRouter, redirect } from "next/navigation";
 import { useEffect } from "react";
-import LoadingScreen from "@/components/LoadingScreen"; // Your loading screen component
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Page() {
   const { data: session, status } = useSession({
@@ -24,29 +24,47 @@ export default function Page() {
       // No session found, redirect to login
       redirect("/signIn");
     } else {
-      const userDivision = session.user.division;
+      const userDivision = session.user.division
+        ? session.user.division.toLowerCase()
+        : "soc"; // Default to "soc" if division is undefined
       switch (userDivision) {
         case "iam":
-          redirect("/iam");
+          router.push("/iam");
           break;
         case "soc":
-          redirect("/soc");
+          router.push("/soc");
           break;
         case "gva":
-          redirect("/responses");
+          router.push("/responses");
           break;
         case "admin":
-          redirect("/soc");
+          router.push("/soc");
           break;
         default:
-          redirect("/signIn");
+          router.push("/signIn");
       }
     }
-  }, [session, status]);
+  }, [session, status, router]);
 
   if (status === "loading") {
-    return <LoadingScreen />;
+    return (
+      <div className="h-screen w-full p-4">
+        <div className="flex flex-col space-y-4">
+          <Skeleton className="h-10 w-1/2 rounded-full" />
+          <Skeleton className="h-8 w-1/3 rounded-full" />
+          <Skeleton className="h-screen w-full rounded-3xl" />
+        </div>
+      </div>
+    );
   }
 
-  return null; // Return null as this component only handles redirection
+  return (
+    <div className="h-screen w-full p-4">
+      <div className="flex flex-col space-y-4">
+        <Skeleton className="h-10 w-1/2 rounded-full" />
+        <Skeleton className="h-8 w-1/3 rounded-full" />
+        <Skeleton className="h-screen w-full rounded-3xl" />
+      </div>
+    </div>
+  );
 }

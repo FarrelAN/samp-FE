@@ -44,9 +44,15 @@ const CaseDetails: React.FC<CaseDetailsProps> = ({ caseData, response }) => {
   const router = useRouter();
   const { toast } = useToast(); // Destructure the toast function
 
-  const defaultMessage = `Semangat Pagi Mandirian!\n\nKami menemukan aktivitas yang mencurigakan terkait dengan akun kerja anda. Oleh karena itu, akun anda sekarang telah di deaktivasi. Untuk menindaklanjuti kasus ini, mohon untuk segera mengisi formulir berikut: 
+  const [caseId, description] = caseData.model_name.split(" (");
+  const formattedDescription = `(${description}`;
+
+  const defaultMessage = `Semangat Pagi Mandirian!\n\nKami menemukan aktivitas yang mencurigakan terkait dengan akun kerja anda yaitu:
+  \n${formattedDescription}
+  \nOleh karena itu, akun anda sekarang telah di deaktivasi. Untuk menindaklanjuti kasus ini, mohon untuk segera mengisi formulir berikut: 
   \nID Case (copy ID ini ke forms yang ada):\n${caseData._id}
   \nLink Forms Pengisian:\nhttps://forms.office.com/r/PFBpX5zHWv
+  \nApabila ini merupakan false positive dan aktivitas LEGITIMATE, mohon untuk konfirmasi melalui form dengan memilih opsi "LEGITIMATE ACTIVITY".
   \nSalam dan terima kasih atas perhatian Anda,
   \nTim DTP Security, CISO Group.`;
 
@@ -109,9 +115,6 @@ const CaseDetails: React.FC<CaseDetailsProps> = ({ caseData, response }) => {
       </span>
     ));
   };
-
-  const [caseId, description] = caseData.model_name.split(" (");
-  const formattedDescription = `(${description}`;
 
   // Extract country code from the location
   const countryCode = caseData.location.split("-")[0].toUpperCase();
@@ -179,7 +182,7 @@ const CaseDetails: React.FC<CaseDetailsProps> = ({ caseData, response }) => {
   }, [showToast, toast]);
 
   return (
-    <div className="px-8 py-2 bg-gray-50 rounded-lg shadow-lg space-y-8 my-12">
+    <div className="px-8 py-2 bg-gray-50 rounded-lg shadow-lg space-y-8 my-12 h-fit">
       <div className="flex flex-row ">
         <div className="flex flex-col">
           <div className="flex flex-col pb-10">
@@ -272,7 +275,7 @@ const CaseDetails: React.FC<CaseDetailsProps> = ({ caseData, response }) => {
             </div>
           </div>
         </div>
-        <div className="space-y-8 w-fit mt-12 h-screen mx-8">
+        <div className="space-y-8 w-fit mt-12 h-fit mx-8">
           <Tabs defaultValue="sendMessage" className="w-[600px]">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger

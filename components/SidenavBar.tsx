@@ -34,16 +34,21 @@ export default function SidenavBar({ isCollapsed, setIsCollapsed }: Props) {
   const [userDivision, setUserDivision] = useState<string | null>(null);
 
   useEffect(() => {
-    if (session && session.user) {
+    if (session && session.user && session.user.division) {
       // Assuming session.user.division contains the division info
-      setUserDivision(session.user.division);
+      const division = session.user.division.toLowerCase();
+      setUserDivision(division);
+    } else {
+      setUserDivision("soc"); // Default to 'soc' if division is not available
     }
   }, [session]);
 
   const links = [
     {
       title: "Dashboard",
-      href: "/",
+      href: `/${
+        userDivision === "soc" || userDivision === "iam" ? userDivision : "soc"
+      }`,
       icon: LayoutDashboard,
       variant: "default" as const,
     },
@@ -53,7 +58,7 @@ export default function SidenavBar({ isCollapsed, setIsCollapsed }: Props) {
       icon: BookOpenText,
       variant: "ghost" as const,
     },
-    ...(userDivision !== "SOC"
+    ...(userDivision !== "soc"
       ? [
           {
             title: "Responses",

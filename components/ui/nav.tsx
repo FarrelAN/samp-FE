@@ -82,6 +82,8 @@ export function Nav({
                           size: "icon",
                         }),
                         "h-9 w-9",
+                        link.href === pathname &&
+                          "bg-mandiriWhite text-mandiriBlue-950",
                         link.variant === "default" &&
                           "dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white"
                       )}
@@ -108,8 +110,9 @@ export function Nav({
                         variant: link.href === pathname ? "default" : "ghost",
                         size: "sm",
                       }),
-                      link.variant === "default" &&
-                        "dark:bg-muted dark:text-mandiriYellow dark:hover:bg-muted dark:hover:text-white",
+                      link.href === pathname
+                        ? "bg-mandiriWhite text-mandiriBlue-950 hover:bg-white font-semibold"
+                        : "text-mandiriWhite hover:bg-white hover:text-mandiriBlue-950",
                       "justify-start mr-3 text-md"
                     )}
                   >
@@ -148,6 +151,8 @@ export function Nav({
                           size: "icon",
                         }),
                         "h-9 w-9",
+                        settingsLink.href === pathname &&
+                          "bg-mandiriWhite text-mandiriBlue-950",
                         settingsLink.variant === "default" &&
                           "dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white"
                       )}
@@ -175,9 +180,10 @@ export function Nav({
                           settingsLink.href === pathname ? "default" : "ghost",
                         size: "sm",
                       }),
-                      settingsLink.variant === "default" &&
-                        "dark:bg-muted dark:text-mandiriYellow dark:hover:bg-muted dark:hover:text-white",
-                      "justify-start mr-8 text-md"
+                      settingsLink.href === pathname
+                        ? "bg-mandiriWhite text-mandiriBlue-950 hover:bg-white font-semibold"
+                        : "text-mandiriWhite hover:bg-white hover:text-mandiriBlue-950",
+                      "justify-start mr-3 text-md"
                     )}
                   >
                     <settingsLink.icon className="mr-2 h-4 w-4" />
@@ -210,10 +216,11 @@ export function Nav({
                             logoutLink.href === pathname ? "default" : "ghost",
                           size: "icon",
                         }),
-                        "h-9 w-9 ml-1",
+                        "h-9 w-9",
+                        logoutLink.href === pathname &&
+                          "bg-mandiriWhite text-mandiriBlue-950",
                         logoutLink.variant === "default" &&
-                          "dark:bg-muted dark:text-mandiriYellow dark:hover:bg-muted dark:hover:text-white",
-                        "scale-90"
+                          "dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white"
                       )}
                     >
                       <logoutLink.icon className="h-7 w-7" />
@@ -239,8 +246,9 @@ export function Nav({
                           logoutLink.href === pathname ? "default" : "ghost",
                         size: "sm",
                       }),
-                      logoutLink.variant === "default" &&
-                        "dark:bg-muted dark:text-mandiriYellow dark:hover:bg-muted dark:hover:text-white",
+                      logoutLink.href === pathname
+                        ? "bg-mandiriWhite text-mandiriBlue-950 hover:bg-white font-semibold"
+                        : "text-mandiriWhite hover:bg-white hover:text-mandiriBlue-950",
                       "justify-start mr-3 text-md"
                     )}
                   >
