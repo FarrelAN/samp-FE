@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Carousel1, Carousel2 } from "@/public/assets"; // Import local images
+import Image from "next/image";
 
 const carouselData = [
   {
@@ -21,13 +22,13 @@ const Carousel = () => {
   const [current, setCurrent] = useState(0);
   const length = carouselData.length;
 
-  const nextSlide = () => {
-    setCurrent(current === length - 1 ? 0 : current + 1);
-  };
+  const nextSlide = useCallback(() => {
+    setCurrent((current) => (current === length - 1 ? 0 : current + 1));
+  }, [length]);
 
-  const prevSlide = () => {
-    setCurrent(current === 0 ? length - 1 : current - 1);
-  };
+  const prevSlide = useCallback(() => {
+    setCurrent((current) => (current === 0 ? length - 1 : current - 1));
+  }, [length]);
 
   useEffect(() => {
     const timer = setInterval(() => {

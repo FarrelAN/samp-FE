@@ -7,6 +7,7 @@ import { redirect } from "next/navigation";
 import { useSession } from "next-auth/react";
 import bgImage from "@/public/assets/images/bg8.jpg";
 import { sampLogo } from "@/public/assets"; // Ensure this path correctly points to your background image
+import Image from "next/image";
 
 export default function Login() {
   const [userAD, setUserAD] = useState("");
@@ -36,7 +37,12 @@ export default function Login() {
         }}
       ></div>
       <header className="w-full py-6 px-8 bg-mandiriBlue-950 flex justify-between items-center">
-        <img src={logo.src} alt="Bank Mandiri Logo" className="h-12" />
+        <Image
+          src={logo.src}
+          alt="Bank Mandiri Logo"
+          width={120}
+          height={120}
+        />
         <div className="text-white">
           Indonesia | Tentang Kami | Hubungi Kami | ID | EN
         </div>

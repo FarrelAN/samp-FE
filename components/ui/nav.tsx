@@ -1,5 +1,5 @@
 "use client";
-
+import Image from "next/image";
 import Link from "next/link";
 import { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -60,10 +60,12 @@ export function Nav({
       <div data-collapsed={isCollapsed} className="group flex flex-col h-full">
         {/* Logo Section */}
         <div className="flex justify-center bg-mandiriBlue py-4">
-          <img
+          <Image
             src={logo.src}
             alt="Bank Mandiri Logo"
             className="w-[140px] aspect-auto"
+            width={140}
+            height={140}
           />
         </div>
 

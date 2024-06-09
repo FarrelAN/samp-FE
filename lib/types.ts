@@ -43,3 +43,30 @@ export type ResponseType = {
   menggunakan_vpn: string;
   membuka_tautan_mencurigakan: string;
 };
+
+export interface CaseStatusCounts {
+  CLOSED: number;
+  "ON PROGRESS": number;
+  REVIEW: number;
+  OPEN: number;
+}
+
+export interface CountryHeatmap {
+  [key: string]: number;
+}
+
+export interface HighSeverityCases {
+  highSeverityCount: number;
+}
+
+export interface JobLevelCounts {
+  [key: string]: number;
+}
+
+export interface DashboardData {
+  caseStatusCounts: CaseStatusCounts;
+  countryHeatmap: CountryHeatmap;
+  highSeverityCases: HighSeverityCases[];
+  incomingCases: number;
+  jobLevelCounts: JobLevelCounts;
+}

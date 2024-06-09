@@ -1,5 +1,6 @@
 import logo from "@/public/assets/images/logo2.png";
 import bgImage from "@/public/assets/images/bg8.jpg";
+import Image from "next/image";
 
 const LoadingScreen = () => {
   return (
@@ -15,10 +16,12 @@ const LoadingScreen = () => {
         }}
       ></div>
       <div className="text-center">
-        <img
+        <Image
           src={logo.src}
           alt="Bank Mandiri Logo"
           className="aspect auto w-[200px] p-5"
+          width={200}
+          height={200}
         />
         <div
           className="spinner-border animate-spin inline-block w-10 h-10 border-4 rounded-full"

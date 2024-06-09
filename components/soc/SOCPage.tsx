@@ -1,4 +1,3 @@
-// components/pages/AdminPage.tsx
 "use client";
 import React, { useEffect, useState } from "react";
 import DataTable from "@/components/soc/SOCDataTable";
@@ -22,6 +21,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import SkeletonLoader from "../skeletonLoader";
+import Image from "next/image";
 
 interface HomeProps {
   cases: CaseType[];
@@ -52,7 +52,7 @@ export default function SOCPage({ cases }: HomeProps) {
         ); // Redirect to a "not authorized" page or any other page
       }
     }
-  }, [status, session]);
+  }, [status, session, router]);
 
   if (status === "loading") {
     return <LoadingScreen />; // Use the custom loading screen component
@@ -70,10 +70,12 @@ export default function SOCPage({ cases }: HomeProps) {
       <SkeletonLoader />
       <div className="flex flex-row justify-between">
         <div className="flex flex-row items-center gap-1">
-          <img
+          <Image
             src={sampLogo.src}
             alt="Bank Mandiri Logo"
             className="w-[90px] aspect-auto"
+            width={90}
+            height={90}
           />
           <PageTitle title="Security Dashboard: Security Operations Center Team" />
         </div>

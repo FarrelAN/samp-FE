@@ -182,7 +182,7 @@ const CaseDetails: React.FC<CaseDetailsProps> = ({ caseData, response }) => {
   }, [showToast, toast]);
 
   return (
-    <div className="px-8 py-2 bg-gray-50 rounded-lg shadow-lg space-y-8 my-12 h-fit">
+    <div className="p-8 bg-gray-50 rounded-lg shadow-lg space-y-8 mb-12 mt-4 h-fit">
       <div className="flex flex-row ">
         <div className="flex flex-col">
           <div className="flex flex-col pb-10">
@@ -377,9 +377,9 @@ const CaseDetails: React.FC<CaseDetailsProps> = ({ caseData, response }) => {
                       </AlertDialogTitle>
                       <AlertDialogDescription>
                         This action cannot be undone. This will permanently
-                        reset the user's password and remove user access from
-                        the servers. Please immediately notify the user after
-                        proceeding.
+                        reset the user&apos;s password and remove user access
+                        from the servers. Please immediately notify the user
+                        after proceeding.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>

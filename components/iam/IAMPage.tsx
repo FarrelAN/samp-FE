@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import SkeletonLoader from "../skeletonLoader";
+import Image from "next/image";
 
 interface HomeProps {
   cases: CaseType[];
@@ -87,10 +88,12 @@ export default function IAMPage({ cases }: HomeProps) {
       <SkeletonLoader />
       <div className="flex flex-row justify-between">
         <div className="flex flex-row items-center gap-1">
-          <img
+          <Image
             src={sampLogo.src}
             alt="Bank Mandiri Logo"
             className="w-[90px] aspect-auto"
+            width={90}
+            height={90}
           />
           <PageTitle
             title={`Security Dashboard: Identity Access & Management Team`}

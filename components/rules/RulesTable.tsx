@@ -43,7 +43,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../../ui/select";
+} from "../ui/select";
 
 import {
   ChevronLeftIcon,
@@ -65,8 +65,6 @@ import {
   handleSendToResolver,
   updateCaseStatus,
 } from "@/lib/actions";
-
-Aos.init();
 
 interface DataTableProps {
   data: RuleSetType[];
@@ -103,6 +101,10 @@ const DataTable: FC<DataTableProps> = ({ data }) => {
       }, // Set pageSize to the length of the data to display all rows
     },
   });
+
+  useEffect(() => {
+    Aos.init();
+  }, []);
 
   return (
     <div className="w-full mt-4 border-2  rounded-xl p-5">

@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import RulesTable from "@/components/table/rules/RulesTable";
+import RulesTable from "@/components/rules/RulesTable";
 import PageTitle from "@/components/PageTitle";
 import { useSession } from "next-auth/react";
 import { useRouter, usePathname, redirect } from "next/navigation";
@@ -20,8 +20,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import { rulesData } from "@/components/data/projects/dummie";
+import Image from "next/image";
 
-export default function SOCPage() {
+export default function RulesPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const pathname = usePathname();
@@ -55,10 +56,12 @@ export default function SOCPage() {
     <div className="h-screen w-full bg:mandiriGrey">
       <div className="flex flex-row justify-between">
         <div className="flex flex-row items-center gap-1">
-          <img
+          <Image
             src={sampLogo.src}
             alt="Bank Mandiri Logo"
             className="w-[90px] aspect-auto"
+            width={90}
+            height={90}
           />
           <PageTitle title={pageTitle} />
         </div>

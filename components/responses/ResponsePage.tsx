@@ -22,6 +22,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import jsPDF from "jspdf";
+import Image from "next/image";
 
 interface HomeProps {
   responses: ResponseType[];
@@ -59,15 +60,6 @@ export default function ResponsePage({ responses }: HomeProps) {
   const [analyzeClicked, setAnalyzeClicked] = useState(false);
   const [skipTyping, setSkipTyping] = useState(false);
 
-  if (status === "loading") {
-    return <LoadingScreen />; // Use the custom loading screen component
-  }
-
-  if (status === "unauthenticated") {
-    redirect("/signIn");
-    return null; // Prevent rendering until redirect happens
-  }
-
   const userName = session?.user?.username || "admin";
 
   const handleAnalyzeFeedbacks = async () => {
@@ -99,13 +91,24 @@ export default function ResponsePage({ responses }: HomeProps) {
     doc.save("AI_Case_Analysis.pdf");
   };
 
+  if (status === "loading") {
+    return <LoadingScreen />; // Use the custom loading screen component
+  }
+
+  if (status === "unauthenticated") {
+    redirect("/signIn");
+    return null; // Prevent rendering until redirect happens
+  }
+
   return (
     <div className="h-screen w-full bg:mandiriGrey">
       <div className="flex flex-row items-center gap-1">
-        <img
+        <Image
           src={sampLogo.src}
           alt="Bank Mandiri Logo"
           className="w-[90px] aspect-auto"
+          width={90}
+          height={90}
         />
         <PageTitle
           title={`Security Dashboard: Identity Access & Management Team`}

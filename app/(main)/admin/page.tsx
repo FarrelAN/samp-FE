@@ -1,9 +1,27 @@
-// pages/admin.tsx (or wherever your server component is)
-import { getCase } from "@/lib/actions";
-import AdminPage from "@/components/pages/Admin"; // Client component
+import AdminPage from "@/components/pages/Admin";
+import React from "react";
+import { getAdminData } from "@/lib/actions";
+import { DashboardData } from "@/lib/types";
 
 export default async function Page() {
-  const cases = await getCase(); // Fetch your cases server-side
+  const adminData: DashboardData | null = await getAdminData();
 
-  return <AdminPage cases={cases} />;
+  const fallbackData: DashboardData = {
+    caseStatusCounts: {
+      CLOSED: 0,
+      "ON PROGRESS": 0,
+      REVIEW: 0,
+      OPEN: 0,
+    },
+    countryHeatmap: {},
+    highSeverityCases: [{ highSeverityCount: 0 }],
+    incomingCases: 0,
+    jobLevelCounts: {},
+  };
+
+  return (
+    <div>
+      <AdminPage adminData={adminData || fallbackData} />
+    </div>
+  );
 }

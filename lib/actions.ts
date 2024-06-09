@@ -1,5 +1,5 @@
 import axios from "axios";
-import { CaseType, ResponseType } from "./types";
+import { CaseType, DashboardData, ResponseType } from "./types";
 
 const apiBaseUrl = process.env.API_BASE_URL || "";
 
@@ -14,6 +14,7 @@ export const getCase = async (): Promise<CaseType[]> => {
     return null as unknown as CaseType[];
   }
 };
+
 export const getCaseByID = async (id: string): Promise<CaseType | null> => {
   try {
     const response = await axios.get(`${apiBaseUrl}/case/${id}`);
@@ -149,5 +150,28 @@ export const analyzeFeedbacks = async (): Promise<string> => {
   } catch (error: any) {
     console.error("Error analyzing feedbacks", error.message);
     throw new Error("Failed to analyze feedbacks");
+  }
+};
+
+//create case count call here:
+export const getCaseStatusCounts = async (): Promise<{
+  [key: string]: number;
+}> => {
+  try {
+    const response = await axios.get(`${apiBaseUrl}/case/count`);
+    return response.data;
+  } catch (error: any) {
+    console.error("Error getting case status counts", error.message);
+    return {}; // Return an empty object in case of an error
+  }
+};
+
+export const getAdminData = async (): Promise<DashboardData | null> => {
+  try {
+    const response = await axios.get(`${apiBaseUrl}/case/admin`);
+    return response.data;
+  } catch (error: any) {
+    console.error(`Error getting dashboard admin data`, error.message);
+    return null;
   }
 };
