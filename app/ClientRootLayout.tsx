@@ -6,6 +6,7 @@ import SessionProvider from "./SessionProvider";
 import "aos/dist/aos.css";
 import AOS from "aos";
 import localFont from "next/font/local";
+import "react-tooltip/dist/react-tooltip.css";
 
 const myriad = localFont({
   src: [

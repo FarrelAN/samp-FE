@@ -5,7 +5,7 @@ import PageTitle from "@/components/PageTitle";
 import { useSession } from "next-auth/react";
 import { redirect, usePathname, useRouter } from "next/navigation";
 import LoadingScreen from "@/components/LoadingScreen"; // Adjust the import path if necessary
-import { sampLogo } from "@/public/assets";
+import { sampLogo1 } from "@/public/assets";
 import { CaseType } from "@/lib/types";
 import {
   DropdownMenu,
@@ -52,7 +52,7 @@ export default function IAMPage({ cases }: HomeProps) {
           `/${
             userDivision === "soc" || userDivision === "iam"
               ? userDivision
-              : "soc"
+              : "iam"
           }`
         ); // Redirect to a "not authorized" page or any other page
       } else {
@@ -89,7 +89,7 @@ export default function IAMPage({ cases }: HomeProps) {
       <div className="flex flex-row justify-between">
         <div className="flex flex-row items-center gap-1">
           <Image
-            src={sampLogo.src}
+            src={sampLogo1.src}
             alt="Bank Mandiri Logo"
             className="w-[90px] aspect-auto"
             width={90}

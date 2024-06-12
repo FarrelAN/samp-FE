@@ -6,7 +6,7 @@ import Carousel from "@/components/ui/carousel";
 import { redirect } from "next/navigation";
 import { useSession } from "next-auth/react";
 import bgImage from "@/public/assets/images/bg8.jpg";
-import { sampLogo } from "@/public/assets"; // Ensure this path correctly points to your background image
+import { sampLogo1 } from "@/public/assets"; // Ensure this path correctly points to your background image
 import Image from "next/image";
 
 export default function Login() {
@@ -43,8 +43,11 @@ export default function Login() {
           width={120}
           height={120}
         />
-        <div className="text-white">
-          Indonesia | Tentang Kami | Hubungi Kami | ID | EN
+
+        <div className="flex flex-row items-center gap-1">
+          <h1 className="text-white font-medium text-lg">
+            Secure AD-Case Management Platform
+          </h1>
         </div>
       </header>
       <div className="flex items-center justify-center flex-1 px-8">

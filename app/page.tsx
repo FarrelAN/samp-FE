@@ -38,7 +38,7 @@ export default function Page() {
           router.push("/responses");
           break;
         case "admin":
-          router.push("/soc");
+          router.push("/admin");
           break;
         default:
           router.push("/signIn");

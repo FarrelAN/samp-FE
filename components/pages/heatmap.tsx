@@ -1,62 +1,176 @@
-import React from "react";
-import { MapContainer, TileLayer } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
-import { HeatmapLayer } from "@vgrid/react-leaflet-heatmap-layer";
+import React, { useEffect, useState, memo } from "react";
+import {
+  ComposableMap,
+  Geographies,
+  Geography,
+  Sphere,
+  Graticule,
+  ZoomableGroup,
+} from "react-simple-maps";
+import iso from "iso-3166-1";
+import { Tooltip as ReactTooltip } from "react-tooltip";
+import "react-tooltip/dist/react-tooltip.css";
 
-interface HeatmapProps {
-  highlightCountry: { [key: string]: number };
+const geoUrl = "/features.json";
+import { ScaleLinear, scaleLinear } from "d3-scale";
+
+const colorScale: ScaleLinear<string, string> = scaleLinear<string, string>()
+  .domain([0, 2, 10, 15]) // Adjust domain based on your data range
+  .range(["#00FF00", "#FFFF00", "#FFA500", "#FF0000"]); // Green to yellow to orange to red
+
+interface HighlightCountry {
+  ISO3: string;
+  Name: string;
+  Value: number;
 }
 
-const Heatmap: React.FC<HeatmapProps> = ({ highlightCountry }) => {
-  const countryCoordinates: { [key: string]: [number, number] } = {
-    ID: [-0.7893, 113.9213],
-    UA: [48.3794, 31.1656],
-    IN: [20.5937, 78.9629],
-    RU: [61.524, 105.3188],
-    US: [37.0902, -95.7129],
-    SG: [1.3521, 103.8198],
-    HK: [22.3193, 114.1694],
-    // Add more countries as needed
-  };
+interface MapChartProps {
+  highlightCountry: { [key: string]: number };
+  setTooltipContent: (content: string) => void;
+}
 
-  const heatMapData = Object.entries(highlightCountry)
-    .map(([country, count]) => {
-      const countryCode = country.split("-")[0].toUpperCase();
-      const coordinates = countryCoordinates[countryCode];
-      if (coordinates) {
-        return [coordinates[0], coordinates[1], count] as [
-          number,
-          number,
-          number
-        ];
-      }
-      return null;
-    })
-    .filter((item) => item !== null) as [number, number, number][];
+const getIso3FromIso2 = (iso2: string): string => {
+  if (iso2 === "HK") return "CHN"; // Integrate Hong Kong with China
+  const iso3 = iso.whereAlpha2(iso2)?.alpha3;
+  return iso3 || iso2; // Fallback to ISO2 if no mapping found
+};
+
+const MapChart: React.FC<MapChartProps> = ({
+  highlightCountry,
+  setTooltipContent,
+}) => {
+  const [data, setData] = useState<HighlightCountry[]>([]);
+  const [hoverContent, setHoverContent] = useState("");
+
+  useEffect(() => {
+    // Transform the highlightCountry data
+    const transformedData: HighlightCountry[] = Object.keys(
+      highlightCountry
+    ).map((key) => {
+      const [iso2, name] = key.split("-");
+      return {
+        ISO3: getIso3FromIso2(iso2),
+        Name: name,
+        Value: Number(highlightCountry[key]), // Convert value to number
+      };
+    });
+    setData(transformedData);
+  }, [highlightCountry]);
 
   return (
-    <MapContainer
-      center={[20, 0]}
-      zoom={2}
-      style={{ height: "100%", width: "100%" }}
-      scrollWheelZoom={true}
+    <div
+      className=""
+      style={{
+        position: "relative",
+        paddingBottom: "20px",
+        marginTop: "-70px",
+      }}
     >
-      <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-      <HeatmapLayer
-        fitBoundsOnLoad
-        fitBoundsOnUpdate
-        points={heatMapData}
-        longitudeExtractor={(m) => m[1]}
-        latitudeExtractor={(m) => m[0]}
-        intensityExtractor={(m) => m[2]}
-        radius={30}
-        max={10}
-        blur={20}
-        minOpacity={1}
-        useLocalExtrema={true}
-      />
-    </MapContainer>
+      <div className=" ">
+        <ComposableMap
+          projectionConfig={{
+            rotate: [-10, 0, 0],
+            scale: 170,
+          }}
+          data-tip=""
+        >
+          <ZoomableGroup
+            minZoom={1}
+            maxZoom={4}
+            translateExtent={[
+              [0, 0],
+              [800, 600],
+            ]}
+          >
+            <Sphere
+              stroke="#67B2E8"
+              strokeWidth={0.5}
+              id={""}
+              fill={"transparent"}
+            />
+            <Graticule stroke="#67B2E8" strokeWidth={0.5} />
+            {data.length > 0 && (
+              <Geographies geography={geoUrl}>
+                {({ geographies }) =>
+                  geographies.map((geo) => {
+                    const countryISO3 = geo.id;
+                    const countryName = geo.properties.name;
+
+                    // Match by ISO3 code or name
+                    const d = data.find(
+                      (s) => s.ISO3 === countryISO3 || s.Name === countryName
+                    );
+
+                    return (
+                      <Geography
+                        key={geo.rsmKey}
+                        geography={geo}
+                        fill={d ? colorScale(d.Value).toString() : "#00FF00"}
+                        onMouseEnter={() => {
+                          const content = `${countryName}: ${
+                            d ? d.Value : 0
+                          } cases`;
+                          setTooltipContent(content);
+                          setHoverContent(content);
+                        }}
+                        onMouseLeave={() => {
+                          setTooltipContent("");
+                          setHoverContent("");
+                        }}
+                        className="geo"
+                        data-for="geoTooltip"
+                        data-tip={`${countryName}: ${d ? d.Value : 0} cases`}
+                        style={{
+                          default: {
+                            stroke: "#003d79", // Stroke color for country borders
+                            strokeWidth: 0.1, // Stroke width for country borders
+                            outline: "none",
+                          },
+                          hover: {
+                            fill: "#e9fbff", // Overriding color on hover
+                            stroke: "#000",
+                            strokeWidth: 0.5,
+                            outline: "none",
+                          },
+                          pressed: {
+                            fill: d
+                              ? colorScale(d.Value).toString()
+                              : "#F5F4F6", // Color on click
+                            stroke: "#000",
+                            strokeWidth: 0.5,
+                            outline: "none",
+                          },
+                        }}
+                      />
+                    );
+                  })
+                }
+              </Geographies>
+            )}
+          </ZoomableGroup>
+        </ComposableMap>
+      </div>
+      <h2
+        style={{
+          position: "absolute",
+          bottom: 0,
+          left: "50%",
+          transform: "translateX(-50%) translateY(-25%)",
+          padding: "5px",
+          marginBottom: "20px",
+          borderRadius: "5px",
+          display: hoverContent ? "block" : "none",
+          zIndex: 10,
+          backgroundColor: "#0057b3",
+          color: "#fff",
+        }}
+      >
+        {hoverContent}
+      </h2>
+
+      <ReactTooltip id="geoTooltip" place="top" />
+    </div>
   );
 };
 
-export default Heatmap;
+export default memo(MapChart);

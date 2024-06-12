@@ -47,7 +47,9 @@ export default function SidenavBar({ isCollapsed, setIsCollapsed }: Props) {
     {
       title: "Dashboard",
       href: `/${
-        userDivision === "soc" || userDivision === "iam" ? userDivision : "soc"
+        userDivision === "soc" || userDivision === "iam"
+          ? userDivision
+          : "admin"
       }`,
       icon: LayoutDashboard,
       variant: "default" as const,

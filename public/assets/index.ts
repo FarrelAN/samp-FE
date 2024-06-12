@@ -9,3 +9,4 @@ export { default as Carousel1 } from "./images/carousel1.png";
 export { default as Carousel2 } from "./images/carousel2.png";
 export { default as bgImage } from "./images/bg8.jpg";
 export { default as sampLogo } from "./images/samp2.svg";
+export { default as sampLogo1 } from "./vectors/mainlogo.svg";

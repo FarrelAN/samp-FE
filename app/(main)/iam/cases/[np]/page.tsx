@@ -4,7 +4,7 @@ import CaseDetails from "@/components/iam/CaseDetails"; // Client component
 import { CaseType } from "@/lib/types"; // Assuming you have this type definition
 import { getCaseByID, getResponseByID } from "@/lib/actions"; // Add this import
 import PageTitle from "@/components/PageTitle";
-import { sampLogo } from "@/public/assets";
+import { sampLogo1 } from "@/public/assets";
 import Image from "next/image";
 
 export default async function Home({ params }: { params: { np: string } }) {
@@ -16,7 +16,7 @@ export default async function Home({ params }: { params: { np: string } }) {
     <div className="h-screen w-full bg:mandiriGrey">
       <div className="flex flex-row items-center gap-1">
         <Image
-          src={sampLogo.src}
+          src={sampLogo1.src}
           alt="Bank Mandiri Logo"
           className="w-[90px] aspect-auto"
           width={90}

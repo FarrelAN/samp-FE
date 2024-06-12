@@ -16,10 +16,13 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card";
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
 import {
   AlertDialog,
@@ -183,6 +186,22 @@ const CaseDetails: React.FC<CaseDetailsProps> = ({ caseData, response }) => {
 
   return (
     <div className="p-8 bg-gray-50 rounded-lg shadow-lg space-y-8 mb-12 mt-4 h-fit">
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/iam">IAM</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/iam">Case</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>{caseData.model_name}</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+
       <div className="flex flex-row ">
         <div className="flex flex-col">
           <div className="flex flex-col pb-10">
@@ -366,7 +385,7 @@ const CaseDetails: React.FC<CaseDetailsProps> = ({ caseData, response }) => {
                 </h2>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <button className="w-fit bg-mandiriBlue-950 hover:bg-mandiriBlue-900 text-white py-3 px-6 rounded-lg transition mb-4">
+                    <button className="w-fit bg-white hover:bg-mandiriBlue-900 hover:text-white text-mandiriBlue-950 border-2 border-mandiriBlue-950 py-3 px-6 rounded-lg transition mb-4 ">
                       Reset User Credentials
                     </button>
                   </AlertDialogTrigger>
@@ -397,7 +416,7 @@ const CaseDetails: React.FC<CaseDetailsProps> = ({ caseData, response }) => {
                 </AlertDialog>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <button className="w-fit bg-mandiriYellow-500 hover:bg-mandiriYellow-600 text-white py-3 px-6 rounded-lg transition">
+                    <button className="w-fit bg-white hover:bg-[#ff3030] hover:text-white text-[#ff3030] border-2 border-[#ff3030]  py-3 px-6 rounded-lg transition">
                       Finish Case
                     </button>
                   </AlertDialogTrigger>

@@ -83,7 +83,7 @@ export default function SOCPage({ cases }: HomeProps) {
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="w-24">
               {firstPath}
-              <Menu className="mx-auto" />
+              <Menu className="mx-auto pl-2" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56">

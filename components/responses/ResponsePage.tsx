@@ -5,7 +5,7 @@ import PageTitle from "@/components/PageTitle";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { useRouter } from "next/navigation";
-import { sampLogo } from "@/public/assets";
+import { sampLogo1 } from "@/public/assets";
 import { ResponseType } from "@/lib/types";
 import { analyzeFeedbacks } from "@/lib/actions"; // Import the API call
 import LoadingScreen from "@/app/(main)/home/page";
@@ -101,10 +101,10 @@ export default function ResponsePage({ responses }: HomeProps) {
   }
 
   return (
-    <div className="h-screen w-full bg:mandiriGrey">
+    <div className="h-screen w-full bg:mandiriGrey py-5">
       <div className="flex flex-row items-center gap-1">
         <Image
-          src={sampLogo.src}
+          src={sampLogo1.src}
           alt="Bank Mandiri Logo"
           className="w-[90px] aspect-auto"
           width={90}
@@ -119,19 +119,21 @@ export default function ResponsePage({ responses }: HomeProps) {
 
       <DataTable data={responses} />
 
-      <div className="my-4 items-end justify-between w-full">
+      <div className="my-4  items-end justify-between w-full py-5">
         <Dialog>
           <DialogTrigger asChild>
             <Button
               onClick={() => setAnalyzeClicked(false)}
-              className="bg-mandiriBlue-950 text-white"
+              className="bg-mandiriBlue-950 text-white hover:bg-mandiriBlue-800 hover:text-white "
             >
               Analyze Feedbacks
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[800px]">
             <DialogHeader>
-              <DialogTitle>AI Cybercase Analysis Report</DialogTitle>
+              <DialogTitle className="text-xl">
+                AI Cybercase Analysis Report
+              </DialogTitle>
               <DialogDescription>
                 Generate AI Analysis of the feedbacks from the users.
               </DialogDescription>
@@ -162,16 +164,27 @@ export default function ResponsePage({ responses }: HomeProps) {
               ) : null}
             </div>
             <DialogFooter>
-              <Button onClick={handleAnalyzeFeedbacks}>
+              <Button
+                onClick={handleAnalyzeFeedbacks}
+                className="bg-mandiriBlue-950 text-white hover:bg-mandiriBlue-900  hover:border-2 hover:border-mandiriBlue-950"
+              >
                 Analyze Feedbacks
               </Button>
               {rawResponse && (
-                <Button onClick={handleDownloadPDF} className="mr-auto">
+                <Button
+                  onClick={handleDownloadPDF}
+                  className="mr-auto bg-mandiriBlue-950 hover:bg-mandiriBlue-900 hover:border-2 hover:border-mandiriBlue-950"
+                >
                   Download PDF
                 </Button>
               )}
               <DialogClose asChild>
-                <Button onClick={() => setAiResponse(null)}>Close</Button>
+                <Button
+                  onClick={() => setAiResponse(null)}
+                  className="bg-white border-2 border-red-600 text-red-600 hover:bg-red-600 hover:text-white"
+                >
+                  Close
+                </Button>
               </DialogClose>
             </DialogFooter>
           </DialogContent>

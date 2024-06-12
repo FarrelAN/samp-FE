@@ -5,7 +5,7 @@ import PageTitle from "@/components/PageTitle";
 import { useSession } from "next-auth/react";
 import { useRouter, usePathname, redirect } from "next/navigation";
 import LoadingScreen from "@/components/LoadingScreen"; // Adjust the import path if necessary
-import { sampLogo } from "@/public/assets";
+import { sampLogo1 } from "@/public/assets";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -57,7 +57,7 @@ export default function RulesPage() {
       <div className="flex flex-row justify-between">
         <div className="flex flex-row items-center gap-1">
           <Image
-            src={sampLogo.src}
+            src={sampLogo1.src}
             alt="Bank Mandiri Logo"
             className="w-[90px] aspect-auto"
             width={90}
