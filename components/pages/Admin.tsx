@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
 import LoadingScreen from "@/components/LoadingScreen";
-import { sampLogo, sampLogo1 } from "@/public/assets";
+import { sampLogo } from "@/public/assets";
 import Image from "next/image";
 import { DashboardData } from "@/lib/types";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
@@ -55,7 +55,7 @@ const HalfCircleProgressBar = ({
         pathColor,
         textColor: "black",
         trailColor: "#eeeff1",
-        rotation: 0.75, // Rotate the progress bar
+        rotation: 0.75,
         pathTransitionDuration: 0.5,
       })}
       circleRatio={0.5}
@@ -92,6 +92,18 @@ export default function AdminPage({ adminData }: AdminPageProps) {
     count: adminData.jobLevelCounts[key],
   }));
 
+  const getHighestJobLevel = (
+    jobLevelData: { name: string; count: number }[]
+  ) => {
+    if (jobLevelData.length === 0) return "";
+
+    return jobLevelData.reduce((prev, current) => {
+      return prev.count > current.count ? prev : current;
+    }).name;
+  };
+
+  const highestJobLevel = getHighestJobLevel(jobLevelData);
+
   const totalCases = Object.values(adminData.caseStatusCounts).reduce(
     (acc, curr) => acc + curr,
     0
@@ -102,7 +114,7 @@ export default function AdminPage({ adminData }: AdminPageProps) {
     ((totalCases - adminData.caseStatusCounts.CLOSED) / totalCases) * 100;
 
   return (
-    <div className="min-h-screen w-full  overflow-y-auto">
+    <div className="min-h-screen w-full">
       <div className="flex flex-row justify-between">
         <div className="flex flex-row items-center gap-1">
           <Image
@@ -159,51 +171,85 @@ export default function AdminPage({ adminData }: AdminPageProps) {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <h1>Welcome, {userName} </h1>
-      <div className="flex flex-col gap-5 bg-slate-50 px-5 rounded-lg mt-5 h-screen">
-        <div className="flex flex-row w-full gap-5 ">
-          <div className="bg-white p-6 rounded-lg shadow-md my-5 w-10/12 h-[400px]">
-            <h3 className="text-2xl font-semibold text-gray-800 mb-4">
-              Cases by Job Level
-            </h3>
-            <div className="h-72 font-semibold text-mandiriBlue-950">
-              <ResponsiveContainer width="80%" height="100%">
-                <BarChart data={jobLevelData}>
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Bar dataKey="count" fill="#0057b3" radius={[10, 10, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
+      <h1>Welcome, {userName}</h1>
+      <div className="flex flex-col gap-5 bg-slate-50 px-5 rounded-lg mt-5 ">
+        <div className="flex flex-row gap-5">
+          <div className="flex flex-col gap-5 w-full">
+            <div className="bg-white p-6 rounded-lg shadow-md w-full h-full">
+              <h3 className="text-2xl font-semibold text-gray-800 mb-4">
+                Cases by Job Level
+              </h3>
+              <div className="h-96 font-semibold text-mandiriBlue-950 pb-18 mb-16">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={jobLevelData}>
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar
+                      dataKey="count"
+                      fill="#0057b3"
+                      radius={[10, 10, 0, 0]}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+
+                <h3 className="mx-auto ml-12 items-center justify-center text-lg font-semibold text-gray-800">
+                  From the data collected, the highest number of cases are from
+                  the job level of {highestJobLevel}.
+                </h3>
+              </div>
             </div>
-          </div>
-          <div className="">
-            <div className="bg-white px-6 mx-6 rounded-lg shadow-lg h-fit py-3 w-4/5 mt-5">
-              <h3 className="text-2xl font-semibold text-gray-800 m-4">
-                Country Heatmap
-              </h3>
-              <h3 className="text-md text-gray-800 m-4">
-                This is a heatmap of the sources of cases per country out of the
-                total {Object.keys(adminData.countryHeatmap).length} countries.
-                Hover over to check number of cases per individual country
-              </h3>
-              <div className="h-fit mt-20 px-5">
-                <MapChart
-                  highlightCountry={adminData.countryHeatmap}
-                  setTooltipContent={setTooltipContent}
-                />
-                <ReactTooltip
-                  anchorSelect=".geo"
-                  place="top-start"
-                  isOpen={true}
-                  openOnClick={true}
-                />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 h-fit w-full">
+              <div className="bg-white p-6 rounded-lg shadow-md h-fit">
+                <h3 className="text-2xl font-semibold text-gray-800 mb-4">
+                  High Severity Cases
+                </h3>
+                <p className="text-3xl font-bold text-red-600">
+                  {adminData.highSeverityCases[0].highSeverityCount} cases
+                </p>
+                <p className="text-sm mt-2">
+                  with severity score 30 and above. Require immediate attention
+                  due to their potential impact.
+                </p>
+              </div>
+              <div className="bg-white p-6 rounded-lg shadow-md h-fit">
+                <h3 className="text-2xl font-semibold text-gray-800 mb-4">
+                  Incoming Cases
+                </h3>
+                <p className="text-3xl font-bold text-blue-600">
+                  {adminData.incomingCases} cases since 30 days
+                </p>
+                <p className="text-sm mt-2">
+                  The number of incoming cases indicates the recent activity and
+                  potential workload.
+                </p>
               </div>
             </div>
           </div>
-          <div className="flex flex-col gap-10 mt-14">
-            {" "}
-            <div className="bg-white p-6 rounded-lg shadow-md h-fit">
+          <div className="bg-white px-6 rounded-lg shadow-md w-2/3 h-fit">
+            <h3 className="text-2xl font-semibold text-gray-800 m-4">
+              Country Heatmap
+            </h3>
+            <h3 className="text-md text-gray-800 m-4">
+              This is a heatmap of the sources of cases per country out of the
+              total {Object.keys(adminData.countryHeatmap).length} countries.
+              Hover over to check number of cases per individual country.
+            </h3>
+            <div className="rounded-xl place-items-start items-start justify-start ">
+              <MapChart
+                highlightCountry={adminData.countryHeatmap}
+                setTooltipContent={setTooltipContent}
+              />
+              <ReactTooltip
+                anchorSelect=".geo"
+                place="top-start"
+                isOpen={true}
+                openOnClick={true}
+              />
+            </div>
+          </div>
+          <div className="flex flex-col gap-5 w-5/9">
+            <div className="bg-white p-6 rounded-lg shadow-md">
               <h3 className="text-2xl font-semibold text-gray-800 mb-4">
                 In Progress Cases
               </h3>
@@ -226,7 +272,7 @@ export default function AdminPage({ adminData }: AdminPageProps) {
                 </div>
               </div>
             </div>
-            <div className="bg-white p-6 rounded-lg shadow-md h-fit">
+            <div className="bg-white p-6 rounded-lg shadow-md">
               <h3 className="text-2xl font-semibold text-gray-800 mb-4">
                 Unresolved Cases
               </h3>
@@ -247,32 +293,6 @@ export default function AdminPage({ adminData }: AdminPageProps) {
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-        <div className="ml-72  grid grid-cols-1 lg:grid-cols-4 gap-8 h-fit w-full">
-          <div className="bg-white p-6 rounded-lg shadow-md h-fit mt-[-220px]">
-            <h3 className="text-2xl font-semibold text-gray-800 mb-4">
-              High Severity Cases
-            </h3>
-            <p className="text-3xl font-bold text-red-600">
-              {adminData.highSeverityCases[0].highSeverityCount} cases
-            </p>
-            <p className="text-sm mt-2">
-              with severity score 30 and above. Require immediate attention due
-              to their potential impact.
-            </p>
-          </div>
-          <div className="bg-white p-6 rounded-lg shadow-md h-fit mt-[-220px] ">
-            <h3 className="text-2xl font-semibold text-gray-800 mb-4">
-              Incoming Cases
-            </h3>
-            <p className="text-3xl font-bold text-blue-600">
-              {adminData.incomingCases} cases since 30 days
-            </p>
-            <p className="text-sm mt-2">
-              The number of incoming cases indicates the recent activity and
-              potential workload.
-            </p>
           </div>
         </div>
       </div>

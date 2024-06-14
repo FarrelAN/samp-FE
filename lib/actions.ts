@@ -60,8 +60,7 @@ export const handleSendToResolver = async (caseId: string) => {
       case_status: "ON PROGRESS",
     });
     if (response.status === 200) {
-      alert("Case status updated to ON PROGRESS");
-      window.location.reload(); // Reload the page
+      return response.status;
     }
   } catch (error) {
     console.error("Error updating case status:", error);
@@ -75,8 +74,7 @@ export const handleCaseClosed = async (caseId: string) => {
       case_status: "CLOSED",
     });
     if (response.status === 200) {
-      alert("Case status updated to CLOSED");
-      window.location.reload(); // Reload the page
+      return response.status;
     }
   } catch (error) {
     console.error("Error updating case status:", error);

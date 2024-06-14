@@ -16,16 +16,25 @@ export type CaseType = {
   data_source: string;
   created_at: string;
   resolution: string;
-  owners: string;
+  PIC: {
+    PIC_IAM: string;
+    PIC_SOC: string;
+  };
   associated_insight: string;
   highlight_information: string;
   technique: string;
   rules: string;
   ip_address: string;
   mac_address: string;
-  no_waprib: string;
+  timestamps: {
+    open?: Date;
+    in_progress?: Date;
+    awaiting_review?: Date;
+    closed?: Date;
+  };
+  no_waprib: number;
   job_level: string;
-  logon_attempt: string;
+  logon_attempt: number;
   location: string;
 };
 

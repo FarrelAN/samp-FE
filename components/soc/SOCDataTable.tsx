@@ -12,12 +12,10 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-
 import { ChevronDown } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { BiSearchAlt } from "react-icons/bi";
 import { Button } from "@/components/ui/button";
-
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -25,9 +23,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
-
 import { Input } from "@/components/ui/input";
-
 import {
   Table,
   TableHeader,
@@ -37,7 +33,6 @@ import {
   TableRow,
   TableCell,
 } from "@/components/ui/table";
-
 import {
   Select,
   SelectContent,
@@ -45,19 +40,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
   DoubleArrowLeftIcon,
   DoubleArrowRightIcon,
 } from "@radix-ui/react-icons";
-
 import Aos from "aos";
 import "aos/dist/aos.css";
-
 import { SOCTableColumns } from "@/components/table/column";
-
 import { CaseType } from "@/lib/types";
 import { handleCaseClosed, handleSendToResolver } from "@/lib/actions";
 import {
@@ -69,6 +60,18 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { useToast } from "@/components/ui/use-toast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface ExtendedCaseType extends CaseType {
   caseId: string;
@@ -83,6 +86,7 @@ interface DataTableProps {
 
 const DataTable: FC<DataTableProps> = ({ data }) => {
   const router = useRouter();
+  const { toast } = useToast();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
@@ -96,6 +100,79 @@ const DataTable: FC<DataTableProps> = ({ data }) => {
     const [caseId, description] = rowData.model_name.split(" (");
     const formattedDescription = `(${description}`;
     setSelectedRowData({ ...rowData, caseId, formattedDescription });
+  };
+
+  const handleStatusChange = async (caseId: string) => {
+    try {
+      const response = await handleSendToResolver(caseId);
+      if (response === 200) {
+        toast({
+          title: "Case successfully sent for review",
+          description:
+            "The case has been sent back to the SOC team for review.",
+          style: {
+            backgroundColor: "rgba(34, 197, 94, 0.9)",
+            backdropFilter: "blur(3px)",
+            color: "white",
+            border: "1px solid rgb(232, 233, 234)",
+            boxShadow: "0 2px 5px rgba(0, 0, 0, 0.2)",
+          },
+        });
+
+        setTimeout(() => {
+          window.location.reload(); // Reload the page after a delay
+        }, 2000); // 2000ms = 2 seconds
+      }
+    } catch (error) {
+      console.error("Error sending case:", error);
+      toast({
+        title: "Failed to send case",
+        description: "There was an error sending the case to resolver team",
+        style: {
+          backgroundColor: "rgba(239, 68, 68, 0.5)",
+          backdropFilter: "blur(3px)",
+          color: "white",
+          border: "1px solid rgb(232, 233, 234)",
+          boxShadow: "0 2px 5px rgba(0, 0, 0, 0.2)",
+        },
+      });
+    }
+  };
+
+  const handleCloseCase = async (caseId: string) => {
+    try {
+      const response = await handleCaseClosed(caseId);
+      if (response === 200) {
+        toast({
+          title: "Case successfully closed",
+          description: "The case has been successfully closed and archived.",
+          style: {
+            backgroundColor: "rgba(34, 197, 94, 0.9)",
+            backdropFilter: "blur(3px)",
+            color: "white",
+            border: "1px solid rgb(232, 233, 234)",
+            boxShadow: "0 2px 5px rgba(0, 0, 0, 0.2)",
+          },
+        });
+
+        setTimeout(() => {
+          window.location.reload(); // Reload the page after a delay
+        }, 2000); // 2000ms = 2 seconds
+      }
+    } catch (error) {
+      console.error("Error sending case:", error);
+      toast({
+        title: "Failed to close case",
+        description: "There was an error closing the case",
+        style: {
+          backgroundColor: "rgba(239, 68, 68, 0.5)",
+          backdropFilter: "blur(3px)",
+          color: "white",
+          border: "1px solid rgb(232, 233, 234)",
+          boxShadow: "0 2px 5px rgba(0, 0, 0, 0.2)",
+        },
+      });
+    }
   };
 
   const table = useReactTable({
@@ -118,12 +195,12 @@ const DataTable: FC<DataTableProps> = ({ data }) => {
   });
 
   return (
-    <div className="w-full mt-4 border-2 rounded-xl p-10 ">
+    <div className="w-full mt-4 border-2 rounded-xl p-10">
       <div className="font-bold text-xl text-mandiriBlue-950">
         <h1>Workstation</h1>
       </div>
       <div className="flex items-center py-4">
-        <BiSearchAlt className="text-xl translate-x-9 fill-mandiriBlue-950 z-20 " />
+        <BiSearchAlt className="text-xl translate-x-9 fill-mandiriBlue-950 z-20" />
         <Input
           placeholder="Filter Cases by ID"
           value={
@@ -132,7 +209,7 @@ const DataTable: FC<DataTableProps> = ({ data }) => {
           onChange={(event) =>
             table.getColumn("model_name")?.setFilterValue(event.target.value)
           }
-          className="max-w-sm pl-12 bg-white  text-mandiriBlue-950 rounded-full border-mandiriYellow-500/60 border-2 focus:border-mandiriYellow-500 focus:outline-none transition-all ease-in-out duration-500"
+          className="max-w-sm pl-12 bg-white text-mandiriBlue-950 rounded-full border-mandiriYellow-500/60 border-2 focus:border-mandiriYellow-500 focus:outline-none transition-all ease-in-out duration-500"
         />
 
         <DropdownMenu>
@@ -164,8 +241,8 @@ const DataTable: FC<DataTableProps> = ({ data }) => {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className=" text-light_brown rounded-lg ">
-        <Table className="font-dm-sans ">
+      <div className="text-light_brown rounded-lg">
+        <Table className="font-dm-sans">
           <TableHeader className="">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow className="b" key={headerGroup.id}>
@@ -173,10 +250,10 @@ const DataTable: FC<DataTableProps> = ({ data }) => {
                   let className =
                     "text-center text-mandiriWhite italic bg-mandiriBlue-950 p-2";
                   if (index === 0) {
-                    className += " rounded-l-full "; // Add rounded corners to the left side
+                    className += " rounded-l-full"; // Add rounded corners to the left side
                   }
                   if (index === headerGroup.headers.length - 1) {
-                    className += " rounded-r-full "; // Add rounded corners to the right side
+                    className += " rounded-r-full"; // Add rounded corners to the right side
                   }
                   return (
                     <TableHead key={header.id} className={className}>
@@ -309,7 +386,7 @@ const DataTable: FC<DataTableProps> = ({ data }) => {
           open={!!selectedRowData}
           onOpenChange={() => setSelectedRowData(null)}
         >
-          <DialogContent className="w-[500px] bg-white ">
+          <DialogContent className="w-[500px] bg-white">
             <DialogHeader>
               <DialogTitle className="font-bold">Case Details</DialogTitle>
               <DialogDescription>
@@ -317,7 +394,7 @@ const DataTable: FC<DataTableProps> = ({ data }) => {
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4 font-bold ">
+              <div className="grid grid-cols-4 items-center gap-4 font-bold">
                 <Label className="text-right">Case ID</Label>
                 <div className="col-span-3">{selectedRowData?.caseId}</div>
               </div>
@@ -366,20 +443,40 @@ const DataTable: FC<DataTableProps> = ({ data }) => {
                 <div className="col-span-3">{selectedRowData?.mac_address}</div>
               </div>
             </div>
-            <DialogFooter>
-              <Button
-                onClick={() => handleSendToResolver(selectedRowData?._id)}
-                className="mb-2 bg-mandiriBlue-950 hover:bg-mandiriBlue-900"
-              >
-                Send to Resolver
-              </Button>
-              <Button
-                onClick={() => handleCaseClosed(selectedRowData?._id)}
-                className="bg-mandiriBlue-950 hover:bg-mandiriBlue-900"
-              >
-                Close Case
-              </Button>
-            </DialogFooter>
+            <AlertDialog>
+              <DialogFooter>
+                <AlertDialogTrigger>
+                  <Button
+                    onClick={() => handleStatusChange(selectedRowData?._id)}
+                    className="bg-mandiriBlue-950 hover:bg-mandiriBlue-900"
+                  >
+                    Send to Resolver
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogTrigger>
+                  <Button className="text-white ">Close Case</Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      Are you absolutely sure?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently close
+                      and archive the case
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={() => handleCloseCase(selectedRowData?._id)}
+                    >
+                      Continue
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </DialogFooter>
+            </AlertDialog>
           </DialogContent>
         </Dialog>
       )}

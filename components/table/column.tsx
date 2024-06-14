@@ -43,20 +43,28 @@ export const SOCTableColumns: ColumnDef<CaseType>[] = [
     },
     cell: ({ row }) => {
       const status = (row.getValue("case_status") as string).toLowerCase();
-      let statusColor = "bg-[#0057b8] text-white"; // Default color for "Open"
-      let displayStatus = status; // Default display for "On Progress"
-      if (status === "on progress") statusColor = "bg-[#04b34f] text-white";
-      if (status === "review") {
+      let statusColor =
+        "border-2 border-mandiriBlue-200 bg-mandiriBlue-100 text-mandiriBlue-900"; // Default color for "Open"
+      let displayStatus = "Open"; // Default display for "Open"
+
+      if (status === "on progress") {
+        statusColor = "border-2 border-green-300 bg-green-100 text-green-700";
+        displayStatus = "On Progress";
+      } else if (status === "review") {
+        statusColor =
+          "border-2 border-mandiriYellow-200 bg-mandiriYellow-100 text-yellow-600";
         displayStatus = "Awaiting Review";
-        statusColor = "bg-[#ff9900] text-white";
+      } else if (status === "closed") {
+        statusColor = "bg-red-100 text-red-700";
+        displayStatus = "Closed";
       }
 
       return (
         <div className="flex justify-center">
           <div
-            className={`flex items-center py-1 px-3 rounded-md ${statusColor}`}
+            className={`flex items-center py-1 px-3 rounded-full ${statusColor} bg-opacity-50`}
           >
-            <div className={`capitalize font-semibold`}>{displayStatus}</div>
+            <div className="capitalize font-medium">{displayStatus}</div>
           </div>
         </div>
       );
@@ -64,6 +72,7 @@ export const SOCTableColumns: ColumnDef<CaseType>[] = [
     sortingFn: statusSort,
     sortDescFirst: true,
   },
+
   {
     accessorKey: "case_severity",
     header: ({ column }) => {
@@ -123,7 +132,7 @@ export const SOCTableColumns: ColumnDef<CaseType>[] = [
   },
   {
     accessorKey: "created_at",
-    header: "Created At",
+    header: "Date Opened",
     cell: ({ row }) => {
       return (
         <div className="capitalize pl-0.5">{row.getValue("created_at")}</div>
@@ -151,6 +160,19 @@ export const SOCTableColumns: ColumnDef<CaseType>[] = [
       );
     },
   },
+  {
+    accessorKey: "PIC.PIC_IAM",
+    header: "SOC Controller",
+    cell: ({ row }) => {
+      const status = (row.getValue("case_status") as string).toLowerCase();
+      const picIAM = row.original.PIC?.PIC_IAM || "N/A";
+      return (
+        <div className="capitalize pl-0.5">
+          {status === "open" ? "Not Assigned" : picIAM}
+        </div>
+      );
+    },
+  },
 ];
 
 export const IAMTableColumns: ColumnDef<CaseType>[] = [
@@ -170,11 +192,13 @@ export const IAMTableColumns: ColumnDef<CaseType>[] = [
     },
     cell: ({ row }) => {
       const status = (row.getValue("case_status") as string).toLowerCase();
-      let statusColor = "bg-[#ff9900] text-white"; // Default color for "On Progress"
+      let statusColor =
+        "border-2 border-mandiriYellow-200 bg-mandiriYellow-100 text-yellow-600"; // Default color for "On Progress"
       let displayStatus = "Awaiting Action"; // Default display for "On Progress"
 
       if (status === "review") {
-        statusColor = "bg-[#0057b8] text-white";
+        statusColor =
+          "border-2 border-mandiriBlue-200 bg-mandiriBlue-100 text-mandiriBlue-900";
         displayStatus = "Sent for Review";
       }
 
@@ -182,7 +206,7 @@ export const IAMTableColumns: ColumnDef<CaseType>[] = [
         <div
           className={`flex items-center justify-center px-1 py-1 rounded-md ${statusColor}`}
         >
-          <div className={`capitalize font-semibold drop-shadow-2xl`}>
+          <div className={`capitalize drop-shadow-2xl font-medium`}>
             {displayStatus}
           </div>
         </div>

@@ -62,8 +62,7 @@ const MapChart: React.FC<MapChartProps> = ({
       className=""
       style={{
         position: "relative",
-        paddingBottom: "20px",
-        marginTop: "-70px",
+        paddingBottom: "30px",
       }}
     >
       <div className=" ">
@@ -84,11 +83,11 @@ const MapChart: React.FC<MapChartProps> = ({
           >
             <Sphere
               stroke="#67B2E8"
-              strokeWidth={0.5}
+              strokeWidth={2}
               id={""}
               fill={"transparent"}
             />
-            <Graticule stroke="#67B2E8" strokeWidth={0.5} />
+            <Graticule stroke="#67B2E8" strokeWidth={1.5} />
             {data.length > 0 && (
               <Geographies geography={geoUrl}>
                 {({ geographies }) =>
@@ -123,12 +122,12 @@ const MapChart: React.FC<MapChartProps> = ({
                         style={{
                           default: {
                             stroke: "#003d79", // Stroke color for country borders
-                            strokeWidth: 0.1, // Stroke width for country borders
+                            strokeWidth: 0.3, // Stroke width for country borders
                             outline: "none",
                           },
                           hover: {
                             fill: "#e9fbff", // Overriding color on hover
-                            stroke: "#000",
+                            stroke: "#003d79",
                             strokeWidth: 0.5,
                             outline: "none",
                           },

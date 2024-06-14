@@ -1,17 +1,11 @@
 "use client";
 import { useSession } from "next-auth/react";
-import { useRouter, redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Page() {
-  const { data: session, status } = useSession({
-    required: true,
-    onUnauthenticated() {
-      redirect("/signIn");
-    },
-  });
-
+  const { data: session, status } = useSession();
   const router = useRouter();
 
   useEffect(() => {
@@ -22,7 +16,7 @@ export default function Page() {
 
     if (!session) {
       // No session found, redirect to login
-      redirect("/signIn");
+      router.push("/signIn");
     } else {
       const userDivision = session.user.division
         ? session.user.division.toLowerCase()
