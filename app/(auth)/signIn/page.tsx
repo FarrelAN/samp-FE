@@ -6,7 +6,7 @@ import Carousel from "@/components/ui/carousel";
 import { redirect } from "next/navigation";
 import { useSession } from "next-auth/react";
 import bgImage from "@/public/assets/images/bg8.jpg";
-import { sampLogo1 } from "@/public/assets"; // Ensure this path correctly points to your background image
+import sampLogo from "@/public/assets/vectors/samp2.svg"; // Ensure this path correctly points to your background image
 import Image from "next/image";
 
 export default function Login() {
@@ -36,7 +36,7 @@ export default function Login() {
           zIndex: -1,
         }}
       ></div>
-      <header className="w-full py-6 px-8 bg-mandiriBlue-950 flex justify-between items-center">
+      <header className="w-full py-6 px-8 bg-mandiriBlue-950 flex justify-between items-center h-24">
         <Image
           src={logo.src}
           alt="Bank Mandiri Logo"
@@ -44,8 +44,9 @@ export default function Login() {
           height={120}
         />
 
-        <div className="flex flex-row items-center gap-1">
-          <h1 className="text-white font-medium text-lg">
+        <div className="flex flex-col items-center ">
+          <Image src={sampLogo.src} alt="SAMP logo" width={90} height={90} />
+          <h1 className="text-white font-medium text-md">
             Secure AD-Case Management Platform
           </h1>
         </div>
@@ -57,7 +58,7 @@ export default function Login() {
             <Carousel />
           </div>
           {/* Login form on the right side */}
-          <div className="flex flex-col p-8 w-1/2 max-w-md">
+          <div className="flex flex-col p-6 w-1/2 max-w-md justify-center mr-3">
             <h2 className="text-lg font-semibold text-mandiriBlue-950  mb-6">
               Sign In
             </h2>
@@ -109,12 +110,6 @@ export default function Login() {
                 Sign In
               </button>
             </div>
-            <p className="mt-8 text-center text-sm text-mandiriGrey">
-              Don’t have an account?{" "}
-              <a href="/signUp" className="text-mandiriBlue-950  underline">
-                Sign up
-              </a>
-            </p>
           </div>
         </div>
       </div>

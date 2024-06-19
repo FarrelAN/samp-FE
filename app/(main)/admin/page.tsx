@@ -1,7 +1,7 @@
 import AdminPage from "@/components/pages/Admin";
 import React from "react";
 import { getAdminData } from "@/lib/actions";
-import { DashboardData } from "@/lib/types";
+import { DashboardData, RegionCounts, JobLevelByRegion } from "@/lib/types";
 
 export default async function Page() {
   const adminData: DashboardData | null = await getAdminData();
@@ -17,6 +17,11 @@ export default async function Page() {
     highSeverityCases: [{ highSeverityCount: 0 }],
     incomingCases: 0,
     jobLevelCounts: {},
+    regionCounts: {} as RegionCounts,
+    jobLevelByRegion: {} as JobLevelByRegion,
+    time_caseComplete: 0,
+    time_IAM: 0,
+    time_SOC: 0,
   };
 
   return (
